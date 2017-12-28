@@ -30,12 +30,10 @@ class NRRegisterDeviceLogger {
      * The method registers the device with the TAG service and generates
      * a device ID in the process
      *
-     * @param advertisingId   : device ad id for example Google ad id for google supported devices.
      * @param radioSourceName : send "unknown" if no radio source
-     * @return - the String representation of the device ID.
      */
-    void registerDevice(String advertisingId, String radioSourceName) {
-        Observable.fromCallable(() -> deviceDescriptor.getDeviceDescription(advertisingId, radioSourceName))
+    void registerDevice(String radioSourceName) {
+        Observable.fromCallable(() -> deviceDescriptor.getDeviceDescription(radioSourceName))
                 .subscribeOn(Schedulers.io())
                 .subscribe(this::register, Throwable::printStackTrace);
     }

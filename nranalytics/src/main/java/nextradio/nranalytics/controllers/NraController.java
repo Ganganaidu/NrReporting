@@ -64,11 +64,11 @@ public class NraController {
     /**
      * Register application with NextRadio and generate unique ID to identify the application
      */
-    public void registerApp(String advertisingId, String radioSourceName) {
+    public void registerApp(String radioSourceName) {
         if (!isInitialized()) {
             throw new IllegalArgumentException("The NextRadio Reporting sdk must be initialized before calling " + "registerApp");
         }
-        registerWithSdk(advertisingId, radioSourceName);
+        registerWithSdk(radioSourceName);
     }
 
     /**
@@ -105,8 +105,8 @@ public class NraController {
     /**
      * Register application with NextRadio and generate unique ID to identify the application
      */
-    private void registerWithSdk(String advertisingId, String radioSourceName) {
-        nrRegisterDevice.registerDevice(advertisingId, radioSourceName);
+    private void registerWithSdk(String radioSourceName) {
+        nrRegisterDevice.registerDevice(radioSourceName);
     }
 
     /**

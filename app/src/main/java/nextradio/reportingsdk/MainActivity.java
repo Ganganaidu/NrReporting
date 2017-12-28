@@ -7,6 +7,9 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.Button;
+
+import nextradio.nranalytics.controllers.NraController;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -31,40 +34,31 @@ public class MainActivity extends AppCompatActivity {
         //NraController.getInstance().activateApp();
         // appStorage = new NRPersistedAppStorage();
 
-//        Button register = findViewById(R.id.register);
-//        register.setOnClickListener(view -> NraController.getInstance().registerApp("0000-00-000", "sdk test"));
-//
-//        Button listening = findViewById(R.id.playBtn);
-//        listening.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                //  NraController.getInstance().startListeningSession(931000, "0", 1, "WXRT");
-//            }
-//        });
-//
-//        Button textView = findViewById(R.id.text);
-//        textView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                //NRReportingTracker.getInstance().reportDataToServer();
-//            }
-//        });
-//
-//        Button updateData = findViewById(R.id.updateData);
-//        updateData.setOnClickListener(view -> {
-//                    //NRListeningSessionLogger.getInstance().updateListeningSession();
-////                    NraController.getInstance().recordRadioImpressionEvent("test artist", "test song",
-////                            null, 1, 931000, "0", "WXRT");
-//                }
-//        );
-//
-//        Button stopListening = findViewById(R.id.stopBtn);
-//        stopListening.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                //  NraController.getInstance().stopListeningSession();
-//            }
-//        });
+        Button register = findViewById(R.id.register);
+        register.setOnClickListener(view -> NraController.getInstance().registerApp("0000-00-000", "sdk test"));
+
+        Button listening = findViewById(R.id.playBtn);
+        listening.setOnClickListener(view -> {
+            //  NraController.getInstance().startListeningSession(931000, "0", 1, "WXRT");
+        });
+
+        Button textView = findViewById(R.id.text);
+        textView.setOnClickListener(view -> {
+            //NRReportingTracker.getInstance().reportDataToServer();
+        });
+
+        Button updateData = findViewById(R.id.updateData);
+        updateData.setOnClickListener(view -> {
+                    //NRListeningSessionLogger.getInstance().updateListeningSession();
+//                    NraController.getInstance().recordRadioImpressionEvent("test artist", "test song",
+//                            null, 1, 931000, "0", "WXRT");
+                }
+        );
+
+        Button stopListening = findViewById(R.id.stopBtn);
+        stopListening.setOnClickListener(view -> {
+            //  NraController.getInstance().stopListeningSession();
+        });
     }
 
     @Override

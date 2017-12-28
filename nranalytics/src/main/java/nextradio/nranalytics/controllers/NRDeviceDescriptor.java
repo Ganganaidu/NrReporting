@@ -31,7 +31,7 @@ class NRDeviceDescriptor {
         mContext = context;
     }
 
-    DeviceRegistrationData getDeviceDescription(String adId, String radioSourceName) {
+    DeviceRegistrationData getDeviceDescription(String radioSourceName) {
         if (returnVal != null) {
             return returnVal;
         }
@@ -60,11 +60,7 @@ class NRDeviceDescriptor {
         returnVal.setCarrier(carrierName);
         returnVal.setAppVersion(getDeviceVersionCode());
         returnVal.setMacAddress(getMacAddress());
-
-        if (adId == null || adId.isEmpty()) {
-            returnVal.setAdId(getGoogleAdId());
-        }
-        returnVal.setAdId(adId);
+        returnVal.setAdId(getGoogleAdId());
 
         return returnVal;
     }
