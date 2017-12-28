@@ -35,11 +35,11 @@ public class MainActivity extends AppCompatActivity {
         // appStorage = new NRPersistedAppStorage();
 
         Button register = findViewById(R.id.register);
-        register.setOnClickListener(view -> NraController.getInstance().registerApp("0000-00-000", "sdk test"));
+        register.setOnClickListener(view -> NraController.getInstance().registerApp("sdk test"));
 
         Button listening = findViewById(R.id.playBtn);
         listening.setOnClickListener(view -> {
-            //  NraController.getInstance().startListeningSession(931000, "0", 1, "WXRT");
+            NraController.getInstance().startListeningSession(931000, 0, 1, "WXRT");
         });
 
         Button textView = findViewById(R.id.text);

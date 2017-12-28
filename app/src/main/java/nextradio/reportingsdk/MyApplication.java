@@ -14,6 +14,6 @@ public class MyApplication extends Application {
     public void onCreate() {
         super.onCreate();
         NraController.getInstance().initializeSdk(this);
-        NraController.getInstance().registerApp(null, "NR SDK TEST");
+        NraController.getInstance().registerApp("NR SDK TEST");
     }
 }
