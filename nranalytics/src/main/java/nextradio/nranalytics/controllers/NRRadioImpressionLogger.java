@@ -48,9 +48,9 @@ class NRRadioImpressionLogger {
             jsonObject.put("artist", artist);
             jsonObject.put("title", title);
             jsonObject.put("eventMetadata", eventMetadata);
-            jsonObject.put("deliveryType", deliveryType);
-            jsonObject.put("frequencyHz", frequencyHz);
-            jsonObject.put("frequencySubChannel", frequencySubChannel);
+            jsonObject.put("deliveryType", String.valueOf(deliveryType));
+            jsonObject.put("frequencyHz", String.valueOf(frequencyHz));
+            jsonObject.put("frequencySubChannel", String.valueOf(frequencySubChannel));
             jsonObject.put("callLetters", callLetters);
             try {
                 Location location = NRLocationAdapter.getInstance().getCurrentLocation();
