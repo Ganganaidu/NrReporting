@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Button;
 
+import nextradio.nranalytics.controllers.NRReportingTracker;
 import nextradio.nranalytics.controllers.NraController;
 
 
@@ -39,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
 
         Button listening = findViewById(R.id.playBtn);
         listening.setOnClickListener(view -> {
-            NraController.getInstance().startListeningSession(931000, 0, 1, "WXRT");
+            NraController.getInstance().startListeningSession(101900000, 0, 1, "WTMX");
         });
 
         Button textView = findViewById(R.id.text);

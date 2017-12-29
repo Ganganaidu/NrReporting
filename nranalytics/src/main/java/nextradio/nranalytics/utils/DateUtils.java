@@ -104,6 +104,6 @@ public class DateUtils {
 
     public static String getCurrentUtcTime() {
         Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-        return DateFormats.iso8601FormatUTC(cal.getTime());
+        return DateFormats.msSqlDateFormat(cal.getTime());
     }
 }

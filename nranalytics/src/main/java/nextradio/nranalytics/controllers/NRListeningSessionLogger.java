@@ -80,9 +80,9 @@ class NRListeningSessionLogger {
 
             jsonObject.put("type", "Session.Listening.Channel");
             jsonObject.put("startTime", currentUTCString);
-            jsonObject.put("deliveryType", deliveryType);
-            jsonObject.put("frequencyHz", frequencyHz);
-            jsonObject.put("frequencySubChannel", frequencySubChannel);
+            jsonObject.put("deliveryType", String.valueOf(deliveryType));
+            jsonObject.put("frequencyHz", String.valueOf(frequencyHz));
+            jsonObject.put("frequencySubChannel", String.valueOf(frequencySubChannel));
             jsonObject.put("callLetters", callLetters);
             jsonObject.put("endTime", currentUTCString);
             jsonObject.put("isEnded", false);
@@ -91,6 +91,9 @@ class NRListeningSessionLogger {
                 if (location != null) {
                     jsonObject.put("latitude", Double.toString(location.getLatitude()));
                     jsonObject.put("longitude", Double.toString(location.getLatitude()));
+                } else {
+                    jsonObject.put("latitude", "null");
+                    jsonObject.put("longitude", "null");
                 }
             } catch (Exception e) {
                 e.printStackTrace();
