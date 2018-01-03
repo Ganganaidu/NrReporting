@@ -2,6 +2,8 @@ apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion 26
+    buildToolsVersion '26.0.2'
+
     defaultConfig {
         minSdkVersion 17
     }
@@ -12,5 +14,4 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-
 }
