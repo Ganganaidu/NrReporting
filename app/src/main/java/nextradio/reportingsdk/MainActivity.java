@@ -9,7 +9,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Button;
 
-import nextradio.nranalytics.controllers.NRReportingTracker;
 import nextradio.nranalytics.controllers.NraController;
 
 
@@ -27,38 +26,38 @@ public class MainActivity extends AppCompatActivity {
      */
     private static final int REQUEST_CHECK_SETTINGS = 0x1;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //NraController.getInstance().activateApp();
-        // appStorage = new NRPersistedAppStorage();
+        NraController.activateApp();
 
         Button register = findViewById(R.id.register);
-        register.setOnClickListener(view -> NraController.getInstance().registerApp("sdk test"));
+        register.setOnClickListener(view -> NraController.registerApp("sdk test"));
 
         Button listening = findViewById(R.id.playBtn);
         listening.setOnClickListener(view -> {
-            NraController.getInstance().startListeningSession(101900000, 0, 1, "WTMX");
+            NraController.startListeningSession(101900000, 0, 1, "WTMX");
         });
 
         Button textView = findViewById(R.id.text);
         textView.setOnClickListener(view -> {
-            //NRReportingTracker.getInstance().reportDataToServer();
+            //NRReportingTracker.reportDataToServer();
         });
 
         Button updateData = findViewById(R.id.updateData);
         updateData.setOnClickListener(view -> {
                     //NRListeningSessionLogger.getInstance().updateListeningSession();
-//                    NraController.getInstance().recordRadioImpressionEvent("test artist", "test song",
-//                            null, 1, 931000, "0", "WXRT");
+                    NraController.recordRadioImpressionEvent("", "",
+                            "Data", 101900000, 1, 0, "WTMX");
                 }
         );
 
         Button stopListening = findViewById(R.id.stopBtn);
         stopListening.setOnClickListener(view -> {
-            //  NraController.getInstance().stopListeningSession();
+            //  NraController.stopListeningSession();
         });
     }
 
@@ -73,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        //  NraController.getInstance().deActivateApp();
+        //  NraController.deActivateApp();
     }
 
     /**

@@ -13,25 +13,17 @@ public class NraController {
 
     static String SDK_VERSION = "1.0.2";
 
-    private static NraController instance;
+    private static NRRegisterDeviceLogger nrRegisterDevice;
 
-    private NRRegisterDeviceLogger nrRegisterDevice;
+    private static boolean sdkInitialized;
 
-    private boolean sdkInitialized;
-
-    public static NraController getInstance() {
-        if (instance == null) {
-            instance = new NraController();
-        }
-        return instance;
-    }
 
     /**
      * This function initializes the NextRadio Reporting SDK. This function should call on the main application start up
      *
      * @param application The application context
      */
-    public synchronized void initializeSdk(Application application) {
+    public static synchronized void initializeSdk(Application application) {
         if (application == null) {
             throw new IllegalArgumentException("context must be non-null");
         }
@@ -45,7 +37,7 @@ public class NraController {
     /**
      * initialize all classes and variables that we need for this SDK setup
      */
-    private void initLocalObjects() {
+    private static void initLocalObjects() {
         NRPersistedAppStorage mPrefStorage = new NRPersistedAppStorage();
         nrRegisterDevice = new NRRegisterDeviceLogger(mPrefStorage);
 
@@ -57,14 +49,14 @@ public class NraController {
      *
      * @return true if initialized, false if not
      */
-    private synchronized boolean isInitialized() {
+    private static synchronized boolean isInitialized() {
         return sdkInitialized;
     }
 
     /**
      * Register application with NextRadio and generate unique ID to identify the application
      */
-    public void registerApp(String radioSourceName) {
+    public static void registerApp(String radioSourceName) {
         if (!isInitialized()) {
             throw new IllegalArgumentException("The NextRadio Reporting sdk must be initialized before calling " + "registerApp");
         }
@@ -73,10 +65,9 @@ public class NraController {
 
     /**
      * Notifies the events system that the app has launched & logs an activatedApp event.  Should be
-     * called whenever your app becomes active, typically in the Application create method of each
-     * long-running of your app.
+     * called whenever your app becomes active, typically in the Activity  onCreate() method of your MainActivity class
      */
-    public void activateApp() {
+    public static void activateApp() {
         if (!isInitialized()) {
             throw new IllegalArgumentException("The NextRadio Reporting sdk must be initialized before calling " + "activateApp");
         }
@@ -87,14 +78,10 @@ public class NraController {
     /**
      * Notifies the events system that the app has been deactivated (put in the background) and
      * tracks the application session information(Send data to server or stop collecting data).
-     * Should be called whenever your app becomes inactive, typically in the onPause() method of main Activity of your app,
-     * if your app is not playing FM station. If app is active(playing FM) don't call this in onPause().
-     * <p>
-     * <p>
-     * Also call this on your Main/Base Activity onDestroy() method
-     * </>
+     * Should be called whenever your app becomes inactive, typically in the onDestroy() method of MainActivity of your app.
+     * And do not call this if your app is playing FM Radio.
      */
-    public void deActivateApp() {
+    public static void deActivateApp() {
         if (!isInitialized()) {
             throw new IllegalArgumentException("The NextRadio Reporting sdk must be initialized before calling " + "deActivateApp");
         }
@@ -105,7 +92,7 @@ public class NraController {
     /**
      * Register application with NextRadio and generate unique ID to identify the application
      */
-    private void registerWithSdk(String radioSourceName) {
+    private static void registerWithSdk(String radioSourceName) {
         nrRegisterDevice.registerDevice(radioSourceName);
     }
 
@@ -117,14 +104,19 @@ public class NraController {
      * @param deliveryType        type of the station, number 1=FM|2=Stream|3=AM,
      * @param callLetters         optional value, callLetters for the station
      */
-    public void startListeningSession(long frequencyHz, int frequencySubChannel, int deliveryType, String callLetters) {
+    public static void startListeningSession(long frequencyHz, int frequencySubChannel, int deliveryType, String callLetters) {
         if (!isInitialized()) {
             throw new IllegalArgumentException("The NextRadio Reporting sdk must be initialized before calling " + "startListeningSession");
         }
         NRListeningSessionLogger.getInstance().recordListeningSession(frequencyHz, frequencySubChannel, deliveryType, callLetters);
     }
 
-    public void stopListeningSession() {
+    /**
+     * stops reporting listening data and send data to server
+     * <p>
+     * Call this when your app stops playing FM radio
+     */
+    public static void stopListeningSession() {
         if (!isInitialized()) {
             throw new IllegalArgumentException("The NextRadio Reporting sdk must be initialized before calling " + "stopListeningSession");
         }
@@ -143,8 +135,8 @@ public class NraController {
      * @param frequencySubChannel : tells you weather channel is HD or HD2 or normal station
      * @param callLetters         : optional send call letters for the current station ex: WXRT(93.1)
      */
-    public void recordRadioImpressionEvent(String artist, String title, String eventMetadata,
-                                           long frequencyHz, int frequencySubChannel, int deliveryType, String callLetters) {
+    public static void recordRadioImpressionEvent(String artist, String title, String eventMetadata,
+                                                  long frequencyHz, int frequencySubChannel, int deliveryType, String callLetters) {
         if (!isInitialized()) {
             throw new IllegalArgumentException("The NextRadio Reporting sdk must be initialized before calling " + "recordRadioImpressionEvent");
         }

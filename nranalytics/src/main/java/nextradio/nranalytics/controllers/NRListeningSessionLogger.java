@@ -57,7 +57,7 @@ class NRListeningSessionLogger {
      */
     void recordListeningSession(long frequencyHz, int frequencySubChannel, int deliveryType, String callLetters) {
         //no need to report or save listening session if current system value is zero
-        if (getCurrentVolume() <= 0) {
+        if (getCurrentVolume() <= 0 || frequencyHz <= 0) {
             return;
         }
         boolean isEqualToCurrentStation = isEqualToCurrentTune(frequencyHz, frequencySubChannel, deliveryType);

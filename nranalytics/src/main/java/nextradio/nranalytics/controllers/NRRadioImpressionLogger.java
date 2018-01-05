@@ -14,6 +14,9 @@ import nextradio.nranalytics.utils.GsonConverter;
 class NRRadioImpressionLogger {
 
     private static NRRadioImpressionLogger instance;
+    private long previousFrequencyHz = 0;
+    private String previousArtist = "";
+    private String previousTitle = "";
 
     public static NRRadioImpressionLogger getInstance() {
         if (instance == null) {
@@ -41,6 +44,9 @@ class NRRadioImpressionLogger {
      */
     void recordRadioImpressionEvent(String artist, String title, String eventMetadata, int deliveryType,
                                     long frequencyHz, int frequencySubChannel, String callLetters) {
+        if (isIdenticalData(frequencyHz, artist, title, eventMetadata)) {
+            return;
+        }
         try {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("type", "Impression.RadioEvent");
@@ -67,9 +73,29 @@ class NRRadioImpressionLogger {
 
             String data = GsonConverter.getInstance().createJsonObjectToString(persistedAppStorage.getRadioEventImpression(), jsonObject);
             persistedAppStorage.saveRadioEventImpression(data);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * there is no need to report identical data, doing data validation here by comparing previous values
+     *
+     * @param frequencyHz : we need this to identify station (frequency in hertz ex: 9310000(93.1)
+     * @param title       : name of the current playing song
+     * @param artist      : name of the current playing song
+     */
+    private boolean isIdenticalData(long frequencyHz, String artist, String title, String eventMetadata) {
+        if ((artist == null || artist.isEmpty()) && (title == null || title.isEmpty()) && (eventMetadata == null || eventMetadata.isEmpty())) {
+            return true;
+        }
+        boolean isIdentical = previousFrequencyHz == frequencyHz && (previousArtist.equals(artist)) && previousTitle.equals(title);
+
+        previousFrequencyHz = frequencyHz;
+        previousArtist = artist;
+        previousTitle = title;
+        return isIdentical;
     }
 }
 

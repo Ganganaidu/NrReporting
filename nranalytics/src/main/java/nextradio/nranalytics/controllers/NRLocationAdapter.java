@@ -237,9 +237,11 @@ class NRLocationAdapter {
         String longitude = String.valueOf(location.getLongitude());
         String hAccuracy = String.valueOf(location.getAccuracy());
         //String locSpeed = roundTwoDecimals(Double.parseDouble(getLocSpeed()));
-
+        if (latitude.isEmpty() && longitude.isEmpty()) {
+            return;
+        }
         try {
-            nrLocationObject.put("type", "Impression.RadioEvent");
+            nrLocationObject.put("type", "Location");
             nrLocationObject.put("createTime", currentUTCString);
             nrLocationObject.put("latitude", latitude);
             nrLocationObject.put("longitude", longitude);

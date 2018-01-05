@@ -13,7 +13,7 @@ public class MyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        NraController.getInstance().initializeSdk(this);
-        NraController.getInstance().registerApp("NR SDK TEST");
+        NraController.initializeSdk(this);
+        NraController.registerApp("NR SDK TEST");
     }
 }
