@@ -35,14 +35,15 @@ class NRDeviceDescriptor {
         if (returnVal != null) {
             return returnVal;
         }
+        //nr_android :// fmSoruce
         returnVal = new DeviceRegistrationData();
-        returnVal.setClientName("nr_android");
+        returnVal.setClientName(radioSourceName);//nr_android
         returnVal.setBrand(Build.BRAND);
         returnVal.setDevice(Build.DEVICE);
         returnVal.setManufacturer(Build.MANUFACTURER);
         returnVal.setModel(Build.MODEL);
         returnVal.setSystemVersion(Build.FINGERPRINT);
-        returnVal.setFmapi(radioSourceName);
+        returnVal.setFmapi("");
         returnVal.setSdkVersion(NraController.SDK_VERSION);
         returnVal.setCountry(Locale.getDefault().getISO3Country());
         returnVal.setLocale(Locale.getDefault().toString());

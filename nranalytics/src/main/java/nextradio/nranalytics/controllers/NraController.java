@@ -79,7 +79,9 @@ public class NraController {
      * Notifies the events system that the app has been deactivated (put in the background) and
      * tracks the application session information(Send data to server or stop collecting data).
      * Should be called whenever your app becomes inactive, typically in the onDestroy() method of MainActivity of your app.
-     * And do not call this if your app is playing FM Radio.
+     * <p>
+     * NOTE: Do not deActivateApp(), if your app(FM Radio) is playing.
+     * </p>
      */
     public static void deActivateApp() {
         if (!isInitialized()) {
