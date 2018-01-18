@@ -6,8 +6,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.List;
 
 import io.reactivex.Observable;
@@ -56,13 +54,13 @@ public class NRReportingTracker {
         Log.d(TAG, "deviceID: " + persistedAppStorage.getDeviceId());
         try {
             TagStationApiClientRequest.getInstance()
-                    .reportData(URLEncoder.encode(persistedAppStorage.getDeviceId(), "UTF-8"), reportingDataObject)
+                    .reportData(persistedAppStorage.getDeviceId(), reportingDataObject)
                     .subscribeOn(Schedulers.io())
                     .subscribe(() -> {
                         Log.d(TAG, "data send completed: ");
                         persistedAppStorage.clearReportingData();
                     }, this::handleError);
-        } catch (UnsupportedEncodingException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -84,7 +82,7 @@ public class NRReportingTracker {
         String radioImpressionData = persistedAppStorage.getRadioEventImpression();
 
         ReportingDataObject<Object> reportingDataObject = new ReportingDataObject<>();
-        reportingDataObject.setMeta(new Meta().setVersion(NraController.SDK_VERSION));
+        reportingDataObject.setMeta(new Meta().setVersion(NextRadioReportingSDK.SDK_VERSION));
 
         //no need to send any records to server if there is no following data.
         if (AppUtils.isNullOrEmpty(locationData) &&

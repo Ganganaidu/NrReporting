@@ -108,6 +108,7 @@ class NRListeningSessionLogger {
     void updateListeningSession() {
         try {
             String currentSession = appStorage.getCurrentListeningData();
+            //Log.d(TAG, "updateListeningSession: "+currentSession);
             if (!AppUtils.isNullOrEmpty(currentSession)) {
                 JSONObject jsonObject = new JSONObject(currentSession);
                 jsonObject.putOpt("endTime", DateUtils.getCurrentUtcTime());
@@ -121,6 +122,7 @@ class NRListeningSessionLogger {
     void endCurrentListeningSession() {
         String previousSessionValue = appStorage.getCurrentListeningData();
         try {
+            //Log.d(TAG, "updateListeningSession: "+previousSessionValue);
             if (!AppUtils.isNullOrEmpty(previousSessionValue)) {
                 JSONObject jsonObject = new JSONObject(previousSessionValue);
                 jsonObject.put("endTime", DateUtils.getCurrentUtcTime());

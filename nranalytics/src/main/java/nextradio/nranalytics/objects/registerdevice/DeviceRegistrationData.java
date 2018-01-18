@@ -206,18 +206,23 @@ public class DeviceRegistrationData {
 
     @Override
     public String toString() {
-        return "DeviceState{" +
+        return "DeviceRegistrationData{" +
+                "clientName='" + clientName + '\'' +
                 ", brand='" + brand + '\'' +
                 ", device='" + device + '\'' +
                 ", manufacturer='" + manufacturer + '\'' +
                 ", model='" + model + '\'' +
                 ", carrier='" + carrier + '\'' +
-                ", otherInfo='" + otherInfo + '\'' +
-                ", countryCode='" + country + '\'' +
-                ", fmAPI='" + fmapi + '\'' +
-                ", adID='" + adId + '\'' +
+                ", fmapi='" + fmapi + '\'' +
+                ", adId='" + adId + '\'' +
                 ", appVersion='" + appVersion + '\'' +
+                ", country='" + country + '\'' +
+                ", locale='" + locale + '\'' +
                 ", systemVersion='" + systemVersion + '\'' +
+                ", macAddress='" + macAddress + '\'' +
+                ", systemSoftware='" + systemSoftware + '\'' +
+                ", sdkVersion='" + sdkVersion + '\'' +
+                ", otherInfo='" + otherInfo + '\'' +
                 '}';
     }
 }

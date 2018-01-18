@@ -7,9 +7,9 @@ import android.app.Application;
  */
 
 
-public class NraController {
+public class NextRadioReportingSDK {
 
-    private static final String TAG = "NraController";
+    private static final String TAG = "NextRadioReportingSDK";
 
     static String SDK_VERSION = "1.0.2";
 
@@ -60,7 +60,17 @@ public class NraController {
         if (!isInitialized()) {
             throw new IllegalArgumentException("The NextRadio Reporting sdk must be initialized before calling " + "registerApp");
         }
-        registerWithSdk(radioSourceName);
+        registerWithSdk(radioSourceName, null);
+    }
+
+    /**
+     * Register application with NextRadio and generate unique ID to identify the application
+     */
+    public static void registerAppWithFmSource(String radioSourceName,String fmSource) {
+        if (!isInitialized()) {
+            throw new IllegalArgumentException("The NextRadio Reporting sdk must be initialized before calling " + "registerApp");
+        }
+        registerWithSdk(radioSourceName, fmSource);
     }
 
     /**
@@ -94,8 +104,8 @@ public class NraController {
     /**
      * Register application with NextRadio and generate unique ID to identify the application
      */
-    private static void registerWithSdk(String radioSourceName) {
-        nrRegisterDevice.registerDevice(radioSourceName);
+    private static void registerWithSdk(String radioSourceName, String fmSourceName) {
+        nrRegisterDevice.registerDevice(radioSourceName, fmSourceName);
     }
 
     /**

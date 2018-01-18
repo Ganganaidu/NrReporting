@@ -20,7 +20,7 @@ public class NRPersistedAppStorage {
     private static final String DEVICE_ID = "deviceID";//is nothing but TS ID
     private static final String CACHING_ID = "cachingID";
     private static final String AD_GROUP = "adGroup";
-    private static final String FEED_USER_ID = "adGroup";
+    private static final String FEED_USER_ID = "feedUserID";
     private static final String SELECTED_COUNTRY = "country";
     private static final String DEVELOPER_MODE = "enabledev";
     private static final String DEVICE_STRING = "DeviceString";

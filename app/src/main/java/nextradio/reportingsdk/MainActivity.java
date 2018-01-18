@@ -9,7 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Button;
 
-import nextradio.nranalytics.controllers.NraController;
+import nextradio.nranalytics.controllers.NextRadioReportingSDK;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -26,20 +26,30 @@ public class MainActivity extends AppCompatActivity {
      */
     private static final int REQUEST_CHECK_SETTINGS = 0x1;
 
+    int data = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        NraController.activateApp();
+        NextRadioReportingSDK.activateApp();
 
         Button register = findViewById(R.id.register);
-        register.setOnClickListener(view -> NraController.registerApp("sdk test"));
+        register.setOnClickListener(view -> NextRadioReportingSDK.registerApp("sdk test"));
 
         Button listening = findViewById(R.id.playBtn);
         listening.setOnClickListener(view -> {
-            NraController.startListeningSession(101900000, 0, 1, "WTMX");
+            data = data + 1;
+            if (data == 1) {
+                NextRadioReportingSDK.startListeningSession(101900000, 0, 1, "WTMX");
+            } else if (data == 2) {
+                NextRadioReportingSDK.startListeningSession(102900000, 0, 1, "WTMX");
+            } else if (data == 3) {
+                NextRadioReportingSDK.startListeningSession(103900000, 0, 1, "WTMX");
+            } else if (data == 4) {
+                NextRadioReportingSDK.startListeningSession(104900000, 0, 1, "WTMX");
+            }
         });
 
         Button textView = findViewById(R.id.text);
@@ -50,14 +60,14 @@ public class MainActivity extends AppCompatActivity {
         Button updateData = findViewById(R.id.updateData);
         updateData.setOnClickListener(view -> {
                     //NRListeningSessionLogger.getInstance().updateListeningSession();
-                    NraController.recordRadioImpressionEvent("", "",
+                    NextRadioReportingSDK.recordRadioImpressionEvent("", "",
                             "Data", 101900000, 1, 0, "WTMX");
                 }
         );
 
         Button stopListening = findViewById(R.id.stopBtn);
         stopListening.setOnClickListener(view -> {
-            //  NraController.stopListeningSession();
+            NextRadioReportingSDK.stopListeningSession();
         });
     }
 
@@ -72,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        //  NraController.deActivateApp();
+        //  NextRadioReportingSDK.deActivateApp();
     }
 
     /**

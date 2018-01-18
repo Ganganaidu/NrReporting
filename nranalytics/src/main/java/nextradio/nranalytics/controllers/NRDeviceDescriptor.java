@@ -31,7 +31,7 @@ class NRDeviceDescriptor {
         mContext = context;
     }
 
-    DeviceRegistrationData getDeviceDescription(String radioSourceName) {
+    DeviceRegistrationData getDeviceDescription(String radioSourceName, String fmSourceName) {
         if (returnVal != null) {
             return returnVal;
         }
@@ -42,9 +42,9 @@ class NRDeviceDescriptor {
         returnVal.setDevice(Build.DEVICE);
         returnVal.setManufacturer(Build.MANUFACTURER);
         returnVal.setModel(Build.MODEL);
+        returnVal.setFmapi(fmSourceName);
         returnVal.setSystemVersion(Build.FINGERPRINT);
-        returnVal.setFmapi("");
-        returnVal.setSdkVersion(NraController.SDK_VERSION);
+        returnVal.setSdkVersion(NextRadioReportingSDK.SDK_VERSION);
         returnVal.setCountry(Locale.getDefault().getISO3Country());
         returnVal.setLocale(Locale.getDefault().toString());
         returnVal.setSystemSoftware("Android");

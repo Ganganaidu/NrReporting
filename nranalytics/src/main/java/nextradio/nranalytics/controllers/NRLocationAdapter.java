@@ -264,7 +264,7 @@ class NRLocationAdapter {
         try {
             String data = GsonConverter.getInstance().createJsonObjectToString(persistedAppStorage.getLocationData(), nrLocationObject);
             persistedAppStorage.saveLocationData(data);
-            // Log.d(TAG, "saveLocationInStorage: " + data);
+             Log.d(TAG, "saveLocationInStorage: " + data);
         } catch (Exception e) {
             e.printStackTrace();
         }

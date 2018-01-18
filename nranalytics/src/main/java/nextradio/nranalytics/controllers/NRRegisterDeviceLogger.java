@@ -32,8 +32,8 @@ class NRRegisterDeviceLogger {
      *
      * @param radioSourceName : send "unknown" if no radio source
      */
-    void registerDevice(String radioSourceName) {
-        Observable.fromCallable(() -> deviceDescriptor.getDeviceDescription(radioSourceName))
+    void registerDevice(String radioSourceName, String fmSourceName) {
+        Observable.fromCallable(() -> deviceDescriptor.getDeviceDescription(radioSourceName, fmSourceName))
                 .subscribeOn(Schedulers.io())
                 .subscribe(this::register, Throwable::printStackTrace);
     }
@@ -50,7 +50,7 @@ class NRRegisterDeviceLogger {
         String lastDeviceRegistrationString = mPrefStorage.getDeviceString();
         String newDeviceRegistrationString = deviceState.getUpdateString();
 
-        Log.d(TAG, "register: " + isFullyRegistered());
+        Log.d(TAG, "register: " + deviceRegistration.getData().toString());
         Log.d(TAG, "getDeviceId: " + mPrefStorage.getDeviceId());
 
         if (!isFullyRegistered() || lastDeviceRegistrationString == null) { //new registration

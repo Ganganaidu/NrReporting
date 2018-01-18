@@ -61,7 +61,7 @@ class NRSessionLogger {
     /**
      * Stop session check
      * <p>
-     * {@link NraController} for more information
+     * {@link NextRadioReportingSDK} for more information
      */
     private void stopSessionUpdates() {
         try {
