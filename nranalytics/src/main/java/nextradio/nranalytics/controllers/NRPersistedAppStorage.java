@@ -16,14 +16,14 @@ public class NRPersistedAppStorage {
 
     private static final String DefaultTAGURL = "http://dev-api.tagstation.com/";
 
-    private static final String OVERRIDE_URL = "apiurl";
-    private static final String DEVICE_ID = "deviceID";//is nothing but TS ID
-    private static final String CACHING_ID = "cachingID";
-    private static final String AD_GROUP = "adGroup";
-    private static final String FEED_USER_ID = "feedUserID";
-    private static final String SELECTED_COUNTRY = "country";
-    private static final String DEVELOPER_MODE = "enabledev";
-    private static final String DEVICE_STRING = "DeviceString";
+    private static final String OVERRIDE_URL = "NextRadioapiurl";
+    private static final String DEVICE_ID = "NextRadiodeviceID";//is nothing but TS ID
+    private static final String CACHING_ID = "NextRadiocachingID";
+    private static final String AD_GROUP = "NextRadioadGroup";
+    private static final String FEED_USER_ID = "NextRadiofeedUserID";
+    private static final String SELECTED_COUNTRY = "NextRadiocountry";
+    private static final String DEVELOPER_MODE = "NextRadioenabledev";
+    private static final String DEVICE_STRING = "NextRadioDeviceString";
 
     private SharedPreferences appSharedPrefs;
     private SharedPreferences.Editor prefsEditor;
