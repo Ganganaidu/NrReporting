@@ -40,8 +40,9 @@ public class DateFormats {
         }
     }
 
-    public static String msSqlDateFormat(Date date) {
+    static String msSqlDateFormat(Date date) {
         synchronized (msSqlDateFormatter) {
+            msSqlDateFormatter.setTimeZone(TimeZone.getTimeZone("UTC"));
             return msSqlDateFormatter.format(date);
         }
     }

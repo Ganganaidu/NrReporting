@@ -3,10 +3,12 @@ package nextradio.nranalytics.controllers;
 import android.content.Context;
 import android.location.Location;
 import android.media.AudioManager;
-import android.util.Log;
 
 import org.json.JSONObject;
 
+import io.reactivex.Observable;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.schedulers.Schedulers;
 import nextradio.nranalytics.utils.AppUtils;
 import nextradio.nranalytics.utils.DateUtils;
 import nextradio.nranalytics.utils.GsonConverter;
@@ -23,6 +25,8 @@ class NRListeningSessionLogger {
     private AudioManager audioManager;
 
     private NRPersistedAppStorage appStorage;
+
+    private CompositeDisposable disposable = new CompositeDisposable();
 
     public static NRListeningSessionLogger getInstance() {
         if (_instance == null) {
@@ -60,17 +64,19 @@ class NRListeningSessionLogger {
         if (getCurrentVolume() <= 0 || frequencyHz <= 0) {
             return;
         }
-        boolean isEqualToCurrentStation = isEqualToCurrentTune(frequencyHz, frequencySubChannel, deliveryType);
-        Log.d(TAG, "isEqualToCurrentStation:" + isEqualToCurrentStation);
-
-        //end current session before inserting new one
-        if (!isEqualToCurrentStation) {
-            endCurrentListeningSession();
-            createNewListeningSession(frequencyHz, frequencySubChannel, deliveryType, callLetters);
-        } else {
-            //update current listening session with current time stamp
-            updateListeningSession();
-        }
+        disposable.clear();
+        disposable.add(Observable.fromCallable(() -> isEqualToCurrentTune(frequencyHz, frequencySubChannel, deliveryType))
+                .subscribeOn(Schedulers.computation())
+                .subscribe(isSameStation -> {
+                    //end current session before inserting new one
+                    if (!isSameStation) {
+                        endCurrentListeningSession();
+                        createNewListeningSession(frequencyHz, frequencySubChannel, deliveryType, callLetters);
+                    } else {
+                        //update current listening session with current time stamp
+                        updateListeningSession();
+                    }
+                }, Throwable::printStackTrace));
     }
 
     private void createNewListeningSession(long frequencyHz, int frequencySubChannel, int deliveryType, String callLetters) {

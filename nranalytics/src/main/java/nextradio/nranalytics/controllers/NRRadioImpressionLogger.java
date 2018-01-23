@@ -4,6 +4,9 @@ import android.location.Location;
 
 import org.json.JSONObject;
 
+import io.reactivex.Observable;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.schedulers.Schedulers;
 import nextradio.nranalytics.utils.DateUtils;
 import nextradio.nranalytics.utils.GsonConverter;
 
@@ -17,6 +20,8 @@ class NRRadioImpressionLogger {
     private long previousFrequencyHz = 0;
     private String previousArtist = "";
     private String previousTitle = "";
+
+    private CompositeDisposable disposable = new CompositeDisposable();
 
     public static NRRadioImpressionLogger getInstance() {
         if (instance == null) {
@@ -44,9 +49,20 @@ class NRRadioImpressionLogger {
      */
     void recordRadioImpressionEvent(String artist, String title, String eventMetadata, int deliveryType,
                                     long frequencyHz, int frequencySubChannel, String callLetters) {
-        if (isIdenticalData(frequencyHz, artist, title, eventMetadata)) {
-            return;
-        }
+        disposable.clear();
+        disposable.add(Observable.fromCallable(() -> isIdenticalData(frequencyHz, artist, title, eventMetadata))
+                .subscribeOn(Schedulers.computation())
+                .subscribe(isIdenticalData -> {
+                    //insert only if data is not identical
+                    if (!isIdenticalData) {
+                        updateRadioImpressionData(artist, title, eventMetadata, deliveryType,
+                                frequencyHz, frequencySubChannel, callLetters);
+                    }
+                }, Throwable::printStackTrace));
+    }
+
+    private void updateRadioImpressionData(String artist, String title, String eventMetadata, int deliveryType,
+                                           long frequencyHz, int frequencySubChannel, String callLetters) {
         try {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("type", "Impression.RadioEvent");
