@@ -106,7 +106,7 @@ class NRRadioImpressionLogger {
         if ((artist == null || artist.isEmpty()) && (title == null || title.isEmpty()) && (eventMetadata == null || eventMetadata.isEmpty())) {
             return true;
         }
-        boolean isIdentical = previousFrequencyHz == frequencyHz && (previousArtist.equals(artist)) && previousTitle.equals(title);
+        boolean isIdentical = previousFrequencyHz == frequencyHz && (previousArtist.equals(artist) && previousTitle.equals(title));
 
         previousFrequencyHz = frequencyHz;
         previousArtist = artist;
