@@ -6,8 +6,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.URLEncoder;
 import java.util.List;
-import java.util.concurrent.Callable;
 
 import io.reactivex.Observable;
 import io.reactivex.disposables.CompositeDisposable;
@@ -46,12 +46,7 @@ public class NRReportingTracker {
 
     void reportDataToServer() {
         disposable.clear();
-        disposable.add(Observable.fromCallable(new Callable<ReportingDataObject<Object>>() {
-            @Override
-            public ReportingDataObject<Object> call() throws Exception {
-                return NRReportingTracker.this.getReportingData();
-            }
-        })
+        disposable.add(Observable.fromCallable(NRReportingTracker.this::getReportingData)
                 .subscribeOn(Schedulers.computation())
                 .subscribe(this::createWebReportingRequest, this::handleError));
     }
@@ -60,7 +55,7 @@ public class NRReportingTracker {
         Log.d(TAG, "deviceID: " + persistedAppStorage.getDeviceId());
         try {
             TagStationApiClientRequest.getInstance()
-                    .reportData(persistedAppStorage.getDeviceId(), reportingDataObject)
+                    .reportData(URLEncoder.encode(persistedAppStorage.getDeviceId(), "UTF-8"), reportingDataObject)
                     .subscribeOn(Schedulers.io())
                     .subscribe(() -> {
                         Log.d(TAG, "data send completed: ");

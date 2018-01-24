@@ -31,7 +31,7 @@ class NRTimer {
 
     void create2MinTimer() {
         disposable.clear();
-        disposable.add(Observable.interval(2, TimeUnit.MINUTES).subscribe(aLong -> {
+        disposable.add(Observable.interval(100, TimeUnit.SECONDS).subscribe(aLong -> {
             Log.d(TAG, "create2MinTimer: ");
 
             //if there is no location updates or location updates not started for some reason, try to check again
@@ -42,7 +42,7 @@ class NRTimer {
             NRListeningSessionLogger.getInstance().updateListeningSession();
 
             sendDataToServer();
-        }));
+        }, Throwable::printStackTrace));
     }
 
     private void sendDataToServer() {

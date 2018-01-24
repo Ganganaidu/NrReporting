@@ -2,6 +2,7 @@ package nextradio.nranalytics.controllers;
 
 import android.util.Log;
 
+import java.net.URLEncoder;
 import java.util.Locale;
 
 import io.reactivex.Observable;
@@ -63,13 +64,17 @@ class NRRegisterDeviceLogger {
                     }, this::handleError);
 
         } else if (!lastDeviceRegistrationString.equals(newDeviceRegistrationString)) {//update
-            TagStationApiClientRequest.getInstance()
-                    .updateRegisteredDevice(mPrefStorage.getDeviceId(), deviceRegistration)
-                    .subscribeOn(Schedulers.io())
-                    .subscribe(deviceRegResponse -> {
-                        mPrefStorage.setDeviceString(newDeviceRegistrationString);
-                        saveDeviceRegResponse(deviceRegResponse);
-                    }, this::handleError);
+            try {
+                TagStationApiClientRequest.getInstance()
+                        .updateRegisteredDevice(URLEncoder.encode(mPrefStorage.getDeviceId(), "UTF-8"), deviceRegistration)
+                        .subscribeOn(Schedulers.io())
+                        .subscribe(deviceRegResponse -> {
+                            mPrefStorage.setDeviceString(newDeviceRegistrationString);
+                            saveDeviceRegResponse(deviceRegResponse);
+                        }, this::handleError);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 

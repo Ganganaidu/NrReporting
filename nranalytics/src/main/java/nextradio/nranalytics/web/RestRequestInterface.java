@@ -19,9 +19,10 @@ public interface RestRequestInterface {
     Observable<DeviceRegResponse> registerDevice(@Body DeviceRegistration carIncident);
 
     @PUT("registration")
-    Observable<DeviceRegResponse> updateRegisteredDevice(@Query("tsd") String tsId, @Body DeviceRegistration carIncident);
+    Observable<DeviceRegResponse> updateRegisteredDevice(@Query(value = "tsd", encoded = true) String tsID, @Body DeviceRegistration carIncident);
 
     @PUT("usage")
-    Completable reportData(@Query("tsd") String tsID, @Body ReportingDataObject<Object> reportingDataObject);
+    Completable reportData(@Query(value = "tsd", encoded = true) String tsID, @Body ReportingDataObject<Object> reportingDataObject);
+
 }
 
