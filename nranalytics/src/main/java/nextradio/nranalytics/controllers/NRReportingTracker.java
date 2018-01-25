@@ -48,6 +48,7 @@ public class NRReportingTracker {
     }
 
     void reportDataToServer() {
+        Log.d(TAG, "reportDataToServer: " + isDataSendingToServer);
         if (!isDataSendingToServer) {
             disposable.clear();
             disposable.add(Observable.fromCallable(NRReportingTracker.this::getReportingData)
@@ -64,7 +65,7 @@ public class NRReportingTracker {
                     .subscribeOn(Schedulers.io())
                     .subscribe(() -> {
                         Log.d(TAG, "data send completed: ");
-                        Observable.timer(10, TimeUnit.SECONDS).subscribe(aLong -> {
+                        Observable.timer(5, TimeUnit.SECONDS).subscribe(aLong -> {
                             persistedAppStorage.clearReportingData();
                             isDataSendingToServer = false;
                         });
@@ -77,6 +78,7 @@ public class NRReportingTracker {
     private void handleError(Throwable error) {
         //reg failed
         Log.d(TAG, "handleError: " + error.getLocalizedMessage());
+        isDataSendingToServer = false;
     }
 
     private String convertDataToString(ReportingDataObject<Object> reportingDataObject) {

@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
 
         Button textView = findViewById(R.id.text);
         textView.setOnClickListener(view -> {
-            //NRReportingTracker.reportDataToServer();
+
         });
 
         Button updateData = findViewById(R.id.updateData);
