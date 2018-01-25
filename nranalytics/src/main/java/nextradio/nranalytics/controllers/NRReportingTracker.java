@@ -81,10 +81,6 @@ public class NRReportingTracker {
         isDataSendingToServer = false;
     }
 
-    private String convertDataToString(ReportingDataObject<Object> reportingDataObject) {
-        return GsonConverter.getInstance().serializeToJson(reportingDataObject);
-    }
-
     private ReportingDataObject<Object> getReportingData() {
         isDataSendingToServer = true;
         String utcOffset = recordUtcOffset();
@@ -163,4 +159,8 @@ public class NRReportingTracker {
         return null;
     }
 
+
+    private String convertDataToString(ReportingDataObject<Object> reportingDataObject) {
+        return GsonConverter.getInstance().serializeToJson(reportingDataObject);
+    }
 }

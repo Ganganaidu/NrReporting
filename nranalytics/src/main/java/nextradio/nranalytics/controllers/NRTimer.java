@@ -31,24 +31,22 @@ class NRTimer {
     }
 
     void create2MinTimer() {
+        Log.d(TAG, "start 2MinTimer: ");
         disposable.clear();
-        disposable.add(Observable.interval(100, TimeUnit.SECONDS)
+        disposable.add(Observable.interval(2, TimeUnit.MINUTES)
                 .subscribeOn(Schedulers.single())
                 .subscribe(aLong -> {
-                    Log.d(TAG, "create2MinTimer: ");
+                    Log.d(TAG, "update 2Min Timer: ");
 
                     //if there is no location updates or location updates not started for some reason, try to check again
                     if (!NRLocationAdapter.getInstance().isLocationUpdatesStarted()) {
                         NRLocationAdapter.getInstance().startLocationUpdates();
                     }
+
                     NRLocationAdapter.getInstance().saveLocationData();
                     NRListeningSessionLogger.getInstance().updateListeningSession();
+                    NRReportingTracker.getInstance().reportDataToServer();
 
-                    sendDataToServer();
                 }, Throwable::printStackTrace));
-    }
-
-    private void sendDataToServer() {
-        Observable.timer(2, TimeUnit.SECONDS).subscribe(aLong -> NRReportingTracker.getInstance().reportDataToServer());
     }
 }
