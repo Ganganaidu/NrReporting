@@ -65,7 +65,8 @@ public class NRReportingTracker {
                     .subscribeOn(Schedulers.io())
                     .subscribe(() -> {
                         Log.d(TAG, "data send completed: ");
-                        Observable.timer(5, TimeUnit.SECONDS).subscribe(aLong -> {
+                        //we need this timer to avoid multiple requests (duplicate data)
+                        Observable.timer(4, TimeUnit.SECONDS).subscribe(aLong -> {
                             persistedAppStorage.clearReportingData();
                             isDataSendingToServer = false;
                         });

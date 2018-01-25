@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
         listening.setOnClickListener(view -> {
             data = data + 1;
             if (data == 1) {
-                NextRadioReportingSDK.startListeningSession(101900000, 0, 1, "WTMX");
+                NextRadioReportingSDK.startListeningSession(93100000, 2, 2, "WXRT");
             } else if (data == 2) {
                 NextRadioReportingSDK.startListeningSession(102900000, 0, 1, "WTMX");
             } else if (data == 3) {
