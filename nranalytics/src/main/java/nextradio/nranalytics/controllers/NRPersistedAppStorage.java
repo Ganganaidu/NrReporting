@@ -195,6 +195,20 @@ public class NRPersistedAppStorage {
         return appSharedPrefs.getString("savePreviousLat", "");
     }
 
+    /**
+     * we need this for comparing current and previous Longitude to avoid duplicate data
+     */
+    public void savePreviousLongitude(String prsLat) {
+        prefsEditor.putString("savePreviousLong", prsLat).apply();
+    }
+
+    /**
+     * @return last saved Longitude
+     */
+    public String getPreviousLongitude() {
+        return appSharedPrefs.getString("savePreviousLong", "");
+    }
+
 
     /**
      * save end time for the current listening session

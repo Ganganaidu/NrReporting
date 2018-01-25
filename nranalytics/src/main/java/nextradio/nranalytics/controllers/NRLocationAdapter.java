@@ -1,8 +1,12 @@
 package nextradio.nranalytics.controllers;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.location.Location;
+import android.os.Build;
 import android.os.Looper;
+import android.provider.Settings;
+import android.text.TextUtils;
 import android.text.format.Formatter;
 import android.util.Log;
 
@@ -22,8 +26,10 @@ import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.text.DecimalFormat;
+import java.util.Date;
 import java.util.Enumeration;
 
+import nextradio.nranalytics.utils.DateFormats;
 import nextradio.nranalytics.utils.DateUtils;
 import nextradio.nranalytics.utils.GsonConverter;
 
@@ -207,6 +213,7 @@ class NRLocationAdapter {
                     int statusCode = ((ApiException) e).getStatusCode();
                     //location failed
                     mRequestingLocationUpdates = false;
+                    mCurrentLocation = null;
                     Log.d(TAG, "addOnFailureListener: " + statusCode);
                     if (locationFailedListener != null) {
                         locationFailedListener.locationFailed(statusCode, e);
@@ -221,13 +228,31 @@ class NRLocationAdapter {
         setCurrentLocation(location);
     }
 
+    private boolean isLocationEnabled(Context context) {
+        int locationMode;
+        String locationProviders;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            try {
+                locationMode = Settings.Secure.getInt(context.getContentResolver(), Settings.Secure.LOCATION_MODE);
+            } catch (Settings.SettingNotFoundException e) {
+                e.printStackTrace();
+                return false;
+            }
+            return locationMode != Settings.Secure.LOCATION_MODE_OFF;
+        } else {
+            locationProviders = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
+            return !TextUtils.isEmpty(locationProviders);
+        }
+    }
+
     /**
      * save location data for every 2 min
      * creating NRLocation object using all the required fields that need to reported for location
      */
     void saveLocationData() {
         Location location = mCurrentLocation;
-        if (location == null) {
+        if (location == null || !isLocationEnabled(NRAppContext.getAppContext())) {
+            mRequestingLocationUpdates = false;
             return;
         }
         String currentUTCString = DateUtils.getCurrentUtcTime();
@@ -237,24 +262,60 @@ class NRLocationAdapter {
         String longitude = String.valueOf(location.getLongitude());
         String hAccuracy = String.valueOf(location.getAccuracy());
         //String locSpeed = roundTwoDecimals(Double.parseDouble(getLocSpeed()));
+
+        //41.8918027
         if (latitude.isEmpty() && longitude.isEmpty()) {
             return;
         }
-        try {
-            nrLocationObject.put("type", "Location");
-            nrLocationObject.put("createTime", currentUTCString);
-            nrLocationObject.put("latitude", latitude);
-            nrLocationObject.put("longitude", longitude);
-            nrLocationObject.put("hAccuracy", hAccuracy);
-            nrLocationObject.put("ipAddress", String.valueOf(location.getSpeed()));
-            nrLocationObject.put("gpsUtcTime", String.valueOf(location.getTime()));
 
-            saveLocationInStorage(nrLocationObject);
+        if (!isSameLocation(location)) {
+            try {
+                nrLocationObject.put("type", "Location");
+                nrLocationObject.put("createTime", currentUTCString);
+                nrLocationObject.put("latitude", latitude);
+                nrLocationObject.put("longitude", longitude);
+                nrLocationObject.put("hAccuracy", hAccuracy);
+                nrLocationObject.put("ipAddress", String.valueOf(location.getSpeed()));
+                nrLocationObject.put("gpsUtcTime", getUtcGpsTime(location.getTime()));
 
-        } catch (JSONException e) {
-            e.printStackTrace();
+
+                saveLocationInStorage(nrLocationObject);
+                //save prev values to avoid same location
+                persistedAppStorage.savePreviousLat(String.valueOf(latitude));
+                persistedAppStorage.savePreviousLongitude(String.valueOf(longitude));
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
         mLastLocation = location;
+    }
+
+    private String getUtcGpsTime(long time) {
+        return DateFormats.msSqlDateFormat(new Date(time));
+    }
+
+    private boolean isSameLocation(Location location) {
+        if (persistedAppStorage.getPreviousLat().isEmpty() || persistedAppStorage.getPreviousLongitude().isEmpty()) {
+            return false;
+        }
+        double lat2 = Double.parseDouble(persistedAppStorage.getPreviousLat());
+        double lng2 = Double.parseDouble(persistedAppStorage.getPreviousLongitude());
+        // lat1 and lng1 are the values of a previously stored location
+        Log.d(TAG, "distance: " + distance(location, lat2, lng2));
+        return (distance(location, lat2, lng2) < 1.0);
+    }
+
+    /**
+     * Returns the approximate distance in METERS between this old and the current location.
+     */
+    private double distance(Location location, double lat2, double lng2) {
+        Location location2 = new Location("Location 2");
+
+        location2.setLatitude(lat2);
+        location2.setLongitude(lng2);
+
+        return location.distanceTo(location2);
     }
 
     /**
@@ -264,7 +325,7 @@ class NRLocationAdapter {
         try {
             String data = GsonConverter.getInstance().createJsonObjectToString(persistedAppStorage.getLocationData(), nrLocationObject);
             persistedAppStorage.saveLocationData(data);
-             Log.d(TAG, "saveLocationInStorage: " + data);
+            Log.d(TAG, "saveLocationInStorage: " + data);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -350,6 +411,4 @@ class NRLocationAdapter {
             e.printStackTrace();
         }
     }
-
-
 }
