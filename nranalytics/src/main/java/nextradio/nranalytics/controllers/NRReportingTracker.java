@@ -8,6 +8,7 @@ import org.json.JSONObject;
 
 import java.net.URLEncoder;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
 import io.reactivex.disposables.CompositeDisposable;
@@ -33,6 +34,8 @@ public class NRReportingTracker {
 
     private CompositeDisposable disposable = new CompositeDisposable();
 
+    private boolean isDataSendingToServer;
+
     public static NRReportingTracker getInstance() {
         if (_instance == null) {
             _instance = new NRReportingTracker();
@@ -45,10 +48,12 @@ public class NRReportingTracker {
     }
 
     void reportDataToServer() {
-        disposable.clear();
-        disposable.add(Observable.fromCallable(NRReportingTracker.this::getReportingData)
-                .subscribeOn(Schedulers.computation())
-                .subscribe(this::createWebReportingRequest, this::handleError));
+        if (!isDataSendingToServer) {
+            disposable.clear();
+            disposable.add(Observable.fromCallable(NRReportingTracker.this::getReportingData)
+                    .subscribeOn(Schedulers.computation())
+                    .subscribe(this::createWebReportingRequest, this::handleError));
+        }
     }
 
     private void createWebReportingRequest(ReportingDataObject<Object> reportingDataObject) {
@@ -59,7 +64,10 @@ public class NRReportingTracker {
                     .subscribeOn(Schedulers.io())
                     .subscribe(() -> {
                         Log.d(TAG, "data send completed: ");
-                        persistedAppStorage.clearReportingData();
+                        Observable.timer(10, TimeUnit.SECONDS).subscribe(aLong -> {
+                            persistedAppStorage.clearReportingData();
+                            isDataSendingToServer = false;
+                        });
                     }, this::handleError);
         } catch (Exception e) {
             e.printStackTrace();
@@ -76,6 +84,7 @@ public class NRReportingTracker {
     }
 
     private ReportingDataObject<Object> getReportingData() {
+        isDataSendingToServer = true;
         String utcOffset = recordUtcOffset();
         String locationData = persistedAppStorage.getLocationData();
         String listeningSessionData = persistedAppStorage.getListeningData();

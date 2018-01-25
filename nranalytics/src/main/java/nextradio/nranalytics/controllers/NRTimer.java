@@ -6,6 +6,7 @@ import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by gkondati on 12/18/2017.
@@ -31,18 +32,20 @@ class NRTimer {
 
     void create2MinTimer() {
         disposable.clear();
-        disposable.add(Observable.interval(100, TimeUnit.SECONDS).subscribe(aLong -> {
-            Log.d(TAG, "create2MinTimer: ");
+        disposable.add(Observable.interval(100, TimeUnit.SECONDS)
+                .subscribeOn(Schedulers.single())
+                .subscribe(aLong -> {
+                    Log.d(TAG, "create2MinTimer: ");
 
-            //if there is no location updates or location updates not started for some reason, try to check again
-            if (!NRLocationAdapter.getInstance().isLocationUpdatesStarted()) {
-                NRLocationAdapter.getInstance().startLocationUpdates();
-            }
-            NRLocationAdapter.getInstance().saveLocationData();
-            NRListeningSessionLogger.getInstance().updateListeningSession();
+                    //if there is no location updates or location updates not started for some reason, try to check again
+                    if (!NRLocationAdapter.getInstance().isLocationUpdatesStarted()) {
+                        NRLocationAdapter.getInstance().startLocationUpdates();
+                    }
+                    NRLocationAdapter.getInstance().saveLocationData();
+                    NRListeningSessionLogger.getInstance().updateListeningSession();
 
-            sendDataToServer();
-        }, Throwable::printStackTrace));
+                    sendDataToServer();
+                }, Throwable::printStackTrace));
     }
 
     private void sendDataToServer() {
