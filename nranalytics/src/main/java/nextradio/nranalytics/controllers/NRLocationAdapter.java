@@ -7,7 +7,6 @@ import android.os.Build;
 import android.os.Looper;
 import android.provider.Settings;
 import android.text.TextUtils;
-import android.text.format.Formatter;
 import android.util.Log;
 
 import com.google.android.gms.common.api.ApiException;
@@ -22,12 +21,7 @@ import com.google.android.gms.location.SettingsClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.SocketException;
-import java.text.DecimalFormat;
 import java.util.Date;
-import java.util.Enumeration;
 
 import nextradio.nranalytics.utils.DateFormats;
 import nextradio.nranalytics.utils.DateUtils;
@@ -268,54 +262,30 @@ class NRLocationAdapter {
             return;
         }
 
-        if (!isSameLocation(location)) {
-            try {
-                nrLocationObject.put("type", "Location");
-                nrLocationObject.put("createTime", currentUTCString);
-                nrLocationObject.put("latitude", latitude);
-                nrLocationObject.put("longitude", longitude);
-                nrLocationObject.put("hAccuracy", hAccuracy);
-                nrLocationObject.put("ipAddress", String.valueOf(location.getSpeed()));
-                nrLocationObject.put("gpsUtcTime", getUtcGpsTime(location.getTime()));
+        try {
+            nrLocationObject.put("type", "Location");
+            nrLocationObject.put("createTime", currentUTCString);
+            nrLocationObject.put("latitude", latitude);
+            nrLocationObject.put("longitude", longitude);
+            nrLocationObject.put("hAccuracy", hAccuracy);
+            nrLocationObject.put("ipAddress", String.valueOf(location.getSpeed()));
+            nrLocationObject.put("gpsUtcTime", getUtcGpsTime(location.getTime()));
 
 
-                saveLocationInStorage(nrLocationObject);
-                //save prev values to avoid same location
-                persistedAppStorage.savePreviousLat(String.valueOf(latitude));
-                persistedAppStorage.savePreviousLongitude(String.valueOf(longitude));
+            saveLocationInStorage(nrLocationObject);
+            //save prev values to avoid same location
+            persistedAppStorage.savePreviousLat(String.valueOf(latitude));
+            persistedAppStorage.savePreviousLongitude(String.valueOf(longitude));
 
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
+
         mLastLocation = location;
     }
 
     private String getUtcGpsTime(long time) {
         return DateFormats.msSqlDateFormat(new Date(time));
-    }
-
-    private boolean isSameLocation(Location location) {
-        if (persistedAppStorage.getPreviousLat().isEmpty() || persistedAppStorage.getPreviousLongitude().isEmpty()) {
-            return false;
-        }
-        double lat2 = Double.parseDouble(persistedAppStorage.getPreviousLat());
-        double lng2 = Double.parseDouble(persistedAppStorage.getPreviousLongitude());
-        // lat1 and lng1 are the values of a previously stored location
-        Log.d(TAG, "distance: " + distance(location, lat2, lng2));
-        return (distance(location, lat2, lng2) < 1.0);
-    }
-
-    /**
-     * Returns the approximate distance in METERS between this old and the current location.
-     */
-    private double distance(Location location, double lat2, double lng2) {
-        Location location2 = new Location("Location 2");
-
-        location2.setLatitude(lat2);
-        location2.setLongitude(lng2);
-
-        return location.distanceTo(location2);
     }
 
     /**
@@ -331,54 +301,54 @@ class NRLocationAdapter {
         }
     }
 
-    /**
-     * get speed of the location
-     */
-    private String getLocSpeed() {
-        if (mCurrentLocation != null && mLastLocation != null) {
-
-            mSpeed = Math.sqrt(Math.pow(mLastLocation.getLongitude() - mCurrentLocation.getLongitude(), 2)
-                    + Math.pow(mLastLocation.getLatitude() - mCurrentLocation.getLatitude(), 2))
-                    / (mLastLocation.getTime() - mCurrentLocation.getTime());
-            mSpeed = (double) Math.round(mSpeed * 100) / 100;
-
-            if (mCurrentLocation.hasSpeed() && mCurrentLocation.getSpeed() > 0) {
-                mSpeed = mCurrentLocation.getSpeed();
-            }
-        }
-        return String.valueOf(mSpeed).replace(",", ".");
-    }
-
-    /**
-     * get ip address from device when we save location
-     */
-    private String getLocalIpAddress() {
-        try {
-            for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements(); ) {
-                NetworkInterface intf = en.nextElement();
-                for (Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses(); enumIpAddr.hasMoreElements(); ) {
-                    InetAddress inetAddress = enumIpAddr.nextElement();
-                    if (!inetAddress.isLoopbackAddress()) {
-                        //Log.d(TAG, "***** IP="+ ip);
-                        return Formatter.formatIpAddress(inetAddress.hashCode());
-                    }
-                }
-            }
-        } catch (SocketException ex) {
-            Log.e(TAG, ex.toString());
-        }
-        return null;
-    }
-
-    private String roundTwoDecimals(double d) {
-        DecimalFormat twoDForm = new DecimalFormat("#.##");
-        return twoDForm.format(d);
-    }
-
-
-    private void setLocationFailedListener(OnLocationFailedListener listener) {
-        locationFailedListener = listener;
-    }
+//    /**
+//     * get speed of the location
+//     */
+//    private String getLocSpeed() {
+//        if (mCurrentLocation != null && mLastLocation != null) {
+//
+//            mSpeed = Math.sqrt(Math.pow(mLastLocation.getLongitude() - mCurrentLocation.getLongitude(), 2)
+//                    + Math.pow(mLastLocation.getLatitude() - mCurrentLocation.getLatitude(), 2))
+//                    / (mLastLocation.getTime() - mCurrentLocation.getTime());
+//            mSpeed = (double) Math.round(mSpeed * 100) / 100;
+//
+//            if (mCurrentLocation.hasSpeed() && mCurrentLocation.getSpeed() > 0) {
+//                mSpeed = mCurrentLocation.getSpeed();
+//            }
+//        }
+//        return String.valueOf(mSpeed).replace(",", ".");
+//    }
+//
+//    /**
+//     * get ip address from device when we save location
+//     */
+//    private String getLocalIpAddress() {
+//        try {
+//            for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements(); ) {
+//                NetworkInterface intf = en.nextElement();
+//                for (Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses(); enumIpAddr.hasMoreElements(); ) {
+//                    InetAddress inetAddress = enumIpAddr.nextElement();
+//                    if (!inetAddress.isLoopbackAddress()) {
+//                        //Log.d(TAG, "***** IP="+ ip);
+//                        return Formatter.formatIpAddress(inetAddress.hashCode());
+//                    }
+//                }
+//            }
+//        } catch (SocketException ex) {
+//            Log.e(TAG, ex.toString());
+//        }
+//        return null;
+//    }
+//
+//    private String roundTwoDecimals(double d) {
+//        DecimalFormat twoDForm = new DecimalFormat("#.##");
+//        return twoDForm.format(d);
+//    }
+//
+//
+//    private void setLocationFailedListener(OnLocationFailedListener listener) {
+//        locationFailedListener = listener;
+//    }
 
     /**
      * @return current Location object
@@ -411,4 +381,27 @@ class NRLocationAdapter {
             e.printStackTrace();
         }
     }
+
+    //    private boolean isSameLocation(Location location) {
+//        if (persistedAppStorage.getPreviousLat().isEmpty() || persistedAppStorage.getPreviousLongitude().isEmpty()) {
+//            return false;
+//        }
+//        double lat2 = Double.parseDouble(persistedAppStorage.getPreviousLat());
+//        double lng2 = Double.parseDouble(persistedAppStorage.getPreviousLongitude());
+//        // lat1 and lng1 are the values of a previously stored location
+//        Log.d(TAG, "distance: " + distance(location, lat2, lng2));
+//        return (distance(location, lat2, lng2) < 1.0);
+//    }
+
+//    /**
+//     * Returns the approximate distance in METERS between this old and the current location.
+//     */
+//    private double distance(Location location, double lat2, double lng2) {
+//        Location location2 = new Location("Location 2");
+//
+//        location2.setLatitude(lat2);
+//        location2.setLongitude(lng2);
+//
+//        return location.distanceTo(location2);
+//    }
 }
