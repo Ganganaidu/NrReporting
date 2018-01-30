@@ -19,11 +19,9 @@ import nextradio.nranalytics.web.TagStationApiClientRequest;
 class NRRegisterDeviceLogger {
     private static final String TAG = "NRRegisterDeviceLogger";
 
-    private NRPersistedAppStorage mPrefStorage;
     private NRDeviceDescriptor deviceDescriptor;
 
-    NRRegisterDeviceLogger(NRPersistedAppStorage preferenceStorage) {
-        mPrefStorage = preferenceStorage;
+    NRRegisterDeviceLogger() {
         deviceDescriptor = new NRDeviceDescriptor(NRAppContext.getAppContext());
     }
 
@@ -48,28 +46,28 @@ class NRRegisterDeviceLogger {
         deviceState.setLocale(Locale.getDefault().toString());
         deviceRegistration.setData(deviceState);
 
-        String lastDeviceRegistrationString = mPrefStorage.getDeviceString();
+        String lastDeviceRegistrationString = NRPersistedAppStorage.getInstaince().getDeviceString();
         String newDeviceRegistrationString = deviceState.getUpdateString();
 
         Log.d(TAG, "register: " + deviceRegistration.getData().toString());
-        Log.d(TAG, "getDeviceId: " + mPrefStorage.getDeviceId());
+        Log.d(TAG, "getDeviceId: " + NRPersistedAppStorage.getInstaince().getDeviceId());
 
         if (!isFullyRegistered() || lastDeviceRegistrationString == null) { //new registration
             TagStationApiClientRequest.getInstance()
                     .registerDevice(deviceRegistration)
                     .subscribeOn(Schedulers.io())
                     .subscribe(deviceRegResponse -> {
-                        mPrefStorage.setDeviceString(newDeviceRegistrationString);
+                        NRPersistedAppStorage.getInstaince().setDeviceString(newDeviceRegistrationString);
                         saveDeviceRegResponse(deviceRegResponse);
                     }, this::handleError);
 
         } else if (!lastDeviceRegistrationString.equals(newDeviceRegistrationString)) {//update
             try {
                 TagStationApiClientRequest.getInstance()
-                        .updateRegisteredDevice(URLEncoder.encode(mPrefStorage.getDeviceId(), "UTF-8"), deviceRegistration)
+                        .updateRegisteredDevice(URLEncoder.encode(NRPersistedAppStorage.getInstaince().getDeviceId(), "UTF-8"), deviceRegistration)
                         .subscribeOn(Schedulers.io())
                         .subscribe(deviceRegResponse -> {
-                            mPrefStorage.setDeviceString(newDeviceRegistrationString);
+                            NRPersistedAppStorage.getInstaince().setDeviceString(newDeviceRegistrationString);
                             saveDeviceRegResponse(deviceRegResponse);
                         }, this::handleError);
             } catch (Exception e) {
@@ -80,8 +78,8 @@ class NRRegisterDeviceLogger {
 
     private void saveDeviceRegResponse(DeviceRegResponse deviceRegResponse) {
         Log.d(TAG, "saveDeviceRegResponse: " + deviceRegResponse.getData().getTsd());
-        mPrefStorage.setDeviceRegistration(deviceRegResponse.getData());
-        mPrefStorage.setDeviceId(deviceRegResponse.getData().getTsd());
+        NRPersistedAppStorage.getInstaince().setDeviceRegistration(deviceRegResponse.getData());
+        NRPersistedAppStorage.getInstaince().setDeviceId(deviceRegResponse.getData().getTsd());
     }
 
     private void handleError(Throwable error) {
@@ -90,7 +88,7 @@ class NRRegisterDeviceLogger {
     }
 
     private boolean isFullyRegistered() {
-        String deviceId = mPrefStorage.getDeviceId();
+        String deviceId = NRPersistedAppStorage.getInstaince().getDeviceId();
         return deviceId != null && deviceId.length() > 0;
     }
 }

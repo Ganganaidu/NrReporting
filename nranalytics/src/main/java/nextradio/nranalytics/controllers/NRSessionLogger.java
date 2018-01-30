@@ -22,7 +22,6 @@ import nextradio.nranalytics.utils.GsonConverter;
 class NRSessionLogger {
     private static final String TAG = "NRSessionLogger";
 
-    private NRPersistedAppStorage mPrefStorage;
     private Timer mSessionTimer;
     private static NRSessionLogger instance;
 
@@ -34,7 +33,6 @@ class NRSessionLogger {
     }
 
     private NRSessionLogger() {
-        mPrefStorage = new NRPersistedAppStorage();
     }
 
     /**
@@ -85,7 +83,7 @@ class NRSessionLogger {
      * </p>
      */
     private void recordAppSession() {
-        String savedValue = mPrefStorage.getAppSessionData();
+        String savedValue = NRPersistedAppStorage.getInstaince().getAppSessionData();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSSS", Locale.ENGLISH);
         String uniqueId = sdf.format(new Date());
 
@@ -104,11 +102,11 @@ class NRSessionLogger {
                 jsonObject.put("type", "Session.AppSession"); //getNewBatchId()
 
                 String data = GsonConverter.getInstance().createJsonObjectToString(savedValue, jsonObject);
-                mPrefStorage.saveAppSessionData(data);
+                NRPersistedAppStorage.getInstaince().saveAppSessionData(data);
             } else {
                 jsonObject = GsonConverter.getInstance().updateSessionEndTime(savedValue, currentUTCString);
                 String data = GsonConverter.getInstance().updateJsonObject(savedValue, jsonObject);
-                mPrefStorage.saveAppSessionData(data);
+                NRPersistedAppStorage.getInstaince().saveAppSessionData(data);
             }
         } catch (JSONException e) {
             e.printStackTrace();

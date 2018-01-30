@@ -30,10 +30,8 @@ class NRRadioImpressionLogger {
         return instance;
     }
 
-    private NRPersistedAppStorage persistedAppStorage;
 
     private NRRadioImpressionLogger() {
-        persistedAppStorage = new NRPersistedAppStorage();
     }
 
     /**
@@ -87,8 +85,8 @@ class NRRadioImpressionLogger {
                 e.printStackTrace();
             }
 
-            String data = GsonConverter.getInstance().createJsonObjectToString(persistedAppStorage.getRadioEventImpression(), jsonObject);
-            persistedAppStorage.saveRadioEventImpression(data);
+            String data = GsonConverter.getInstance().createJsonObjectToString(NRPersistedAppStorage.getInstaince().getRadioEventImpression(), jsonObject);
+            NRPersistedAppStorage.getInstaince().saveRadioEventImpression(data);
 
         } catch (Exception e) {
             e.printStackTrace();

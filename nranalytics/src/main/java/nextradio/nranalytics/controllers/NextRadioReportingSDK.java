@@ -38,10 +38,8 @@ public class NextRadioReportingSDK {
      * initialize all classes and variables that we need for this SDK setup
      */
     private static void initLocalObjects() {
-        NRPersistedAppStorage mPrefStorage = new NRPersistedAppStorage();
-        nrRegisterDevice = new NRRegisterDeviceLogger(mPrefStorage);
-
-        NRLocationAdapter.getInstance().init(mPrefStorage);
+        nrRegisterDevice = new NRRegisterDeviceLogger();
+        NRLocationAdapter.getInstance().init();
     }
 
     /**
@@ -66,7 +64,7 @@ public class NextRadioReportingSDK {
     /**
      * Register application with NextRadio and generate unique ID to identify the application
      */
-    public static void registerAppWithFmSource(String radioSourceName,String fmSource) {
+    public static void registerAppWithFmSource(String radioSourceName, String fmSource) {
         if (!isInitialized()) {
             throw new IllegalArgumentException("The NextRadio Reporting sdk must be initialized before calling " + "registerApp");
         }

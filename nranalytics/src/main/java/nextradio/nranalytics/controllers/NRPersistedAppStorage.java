@@ -28,10 +28,19 @@ public class NRPersistedAppStorage {
     private SharedPreferences appSharedPrefs;
     private SharedPreferences.Editor prefsEditor;
 
+    private static NRPersistedAppStorage nrPersistedAppStorage;
+
+    public static NRPersistedAppStorage getInstaince() {
+        if (nrPersistedAppStorage == null) {
+            nrPersistedAppStorage = new NRPersistedAppStorage();
+        }
+        return nrPersistedAppStorage;
+    }
+
     /**
      * Saving data in shared preferences which will store life time of Application
      */
-    public NRPersistedAppStorage() {
+    NRPersistedAppStorage() {
         appSharedPrefs = PreferenceManager.getDefaultSharedPreferences(NRAppContext.getAppContext());
         this.prefsEditor = appSharedPrefs.edit();
     }
@@ -161,30 +170,30 @@ public class NRPersistedAppStorage {
     /**
      * @param date: save location json data
      */
-    public void saveLocationData(String date) {
+    void saveLocationData(String date) {
         prefsEditor.putString("jsonLocationData", date).apply();
     }
 
     /**
      * @return get location json data
      */
-    public String getLocationData() {
+    String getLocationData() {
         return appSharedPrefs.getString("jsonLocationData", "");
     }
 
 
-    public void saveLocationTime(String sourceName) {
+    private void saveLocationTime(String sourceName) {
         prefsEditor.putString("saveLocationTime", sourceName).apply();
     }
 
-    public String getLocationTime() {
+    private String getLocationTime() {
         return appSharedPrefs.getString("saveLocationTime", "");
     }
 
     /**
      * we need this for comparing current and previous lat to avoid duplicate data
      */
-    public void savePreviousLat(String prsLat) {
+    void savePreviousLat(String prsLat) {
         prefsEditor.putString("savePreviousLat", prsLat).apply();
     }
 
@@ -198,14 +207,14 @@ public class NRPersistedAppStorage {
     /**
      * we need this for comparing current and previous Longitude to avoid duplicate data
      */
-    public void savePreviousLongitude(String prsLat) {
+    void savePreviousLongitude(String prsLat) {
         prefsEditor.putString("savePreviousLong", prsLat).apply();
     }
 
     /**
      * @return last saved Longitude
      */
-    public String getPreviousLongitude() {
+    private String getPreviousLongitude() {
         return appSharedPrefs.getString("savePreviousLong", "");
     }
 
@@ -261,6 +270,15 @@ public class NRPersistedAppStorage {
 
     String getRadioEventImpression() {
         return appSharedPrefs.getString("RadioEventImpression", "");
+    }
+
+    void setUtcSendFlag(boolean updateUTCOfSet) {
+        prefsEditor.putBoolean("updateUTCOfSet", updateUTCOfSet).apply();
+    }
+
+
+    boolean getUTcOfSetUpdateFlag() {
+        return appSharedPrefs.getBoolean("updateUTCOfSet", false);
     }
 }
 

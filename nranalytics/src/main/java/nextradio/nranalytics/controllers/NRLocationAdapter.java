@@ -1,11 +1,14 @@
 package nextradio.nranalytics.controllers;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Build;
 import android.os.Looper;
 import android.provider.Settings;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -91,8 +94,6 @@ class NRLocationAdapter {
 
     private OnLocationFailedListener locationFailedListener;
 
-    private NRPersistedAppStorage persistedAppStorage;
-
     /**
      * we need this failure listener to update user to switch on location when location updates failed to initiate
      */
@@ -112,8 +113,7 @@ class NRLocationAdapter {
     /**
      * initiate all objects that needed for storing and retrieving location
      */
-    void init(NRPersistedAppStorage appStorage) {
-        persistedAppStorage = appStorage;
+    void init() {
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(NRAppContext.getAppContext());
 
@@ -193,9 +193,10 @@ class NRLocationAdapter {
      */
     @SuppressLint("MissingPermission")
     void startLocationUpdates() {
-        if (mRequestingLocationUpdates) {
+        if (mRequestingLocationUpdates || checkPermission()) {
             return;
         }
+
         // Begin by checking if the device has the necessary location settings.
         mSettingsClient.checkLocationSettings(mLocationSettingsRequest)
                 .addOnSuccessListener(locationSettingsResponse -> {
@@ -213,6 +214,14 @@ class NRLocationAdapter {
                         locationFailedListener.locationFailed(statusCode, e);
                     }
                 });
+    }
+
+    /**
+     * @return TRUE if any one of these location permission are missing or if user denies the location permission
+     */
+    private boolean checkPermission() {
+        return (ContextCompat.checkSelfPermission(NRAppContext.getAppContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(NRAppContext.getAppContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED);
     }
 
     private void onLocationChanged(Location location) {
@@ -274,8 +283,8 @@ class NRLocationAdapter {
 
             saveLocationInStorage(nrLocationObject);
             //save prev values to avoid same location
-            persistedAppStorage.savePreviousLat(String.valueOf(latitude));
-            persistedAppStorage.savePreviousLongitude(String.valueOf(longitude));
+            NRPersistedAppStorage.getInstaince().savePreviousLat(String.valueOf(latitude));
+            NRPersistedAppStorage.getInstaince().savePreviousLongitude(String.valueOf(longitude));
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -293,8 +302,8 @@ class NRLocationAdapter {
      */
     private void saveLocationInStorage(JSONObject nrLocationObject) {
         try {
-            String data = GsonConverter.getInstance().createJsonObjectToString(persistedAppStorage.getLocationData(), nrLocationObject);
-            persistedAppStorage.saveLocationData(data);
+            String data = GsonConverter.getInstance().createJsonObjectToString(NRPersistedAppStorage.getInstaince().getLocationData(), nrLocationObject);
+            NRPersistedAppStorage.getInstaince().saveLocationData(data);
             Log.d(TAG, "saveLocationInStorage: " + data);
         } catch (Exception e) {
             e.printStackTrace();
@@ -383,11 +392,11 @@ class NRLocationAdapter {
     }
 
     //    private boolean isSameLocation(Location location) {
-//        if (persistedAppStorage.getPreviousLat().isEmpty() || persistedAppStorage.getPreviousLongitude().isEmpty()) {
+//        if (NRPersistedAppStorage.getInstaince().getPreviousLat().isEmpty() || NRPersistedAppStorage.getInstaince().getPreviousLongitude().isEmpty()) {
 //            return false;
 //        }
-//        double lat2 = Double.parseDouble(persistedAppStorage.getPreviousLat());
-//        double lng2 = Double.parseDouble(persistedAppStorage.getPreviousLongitude());
+//        double lat2 = Double.parseDouble(NRPersistedAppStorage.getInstaince().getPreviousLat());
+//        double lng2 = Double.parseDouble(NRPersistedAppStorage.getInstaince().getPreviousLongitude());
 //        // lat1 and lng1 are the values of a previously stored location
 //        Log.d(TAG, "distance: " + distance(location, lat2, lng2));
 //        return (distance(location, lat2, lng2) < 1.0);
