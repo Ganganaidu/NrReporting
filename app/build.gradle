@@ -24,6 +24,11 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+
+    lintOptions {
+        abortOnError false
+    }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -43,4 +48,5 @@ dependencies {
     //compile 'com.github.Ganganaidu.NrReporting:nranalytics:0.0.3'
 
     compile project(':nranalytics')
+    compile 'com.android.support:support-v4:26.1.0'
 }

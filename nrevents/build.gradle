@@ -8,6 +8,10 @@ android {
         minSdkVersion 17
     }
 
+    lintOptions {
+        abortOnError false
+    }
+
     buildTypes {
         release {
             minifyEnabled false
