@@ -52,9 +52,15 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Button textView = findViewById(R.id.text);
+        Button textView = findViewById(R.id.text);//send Data
         textView.setOnClickListener(view -> {
-
+            //NextRadioReportingSDK.stopListeningSession();
+            NextRadioReportingSDK.startListeningSession(93100000, 2, 2, "WXRT");
+            NextRadioReportingSDK.stopListeningSession();
+            NextRadioReportingSDK.startListeningSession(93200000, 2, 2, "WXRT");
+            //NextRadioReportingSDK.stopListeningSession();
+            // NextRadioReportingSDK.startListeningSession(93300000, 2, 2, "WXRT");
+            //NextRadioReportingSDK.stopListeningSession();
         });
 
         Button updateData = findViewById(R.id.updateData);

@@ -6,9 +6,7 @@ import android.media.AudioManager;
 
 import org.json.JSONObject;
 
-import io.reactivex.Observable;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.schedulers.Schedulers;
 import nextradio.nranalytics.utils.AppUtils;
 import nextradio.nranalytics.utils.DateUtils;
 import nextradio.nranalytics.utils.GsonConverter;
@@ -23,8 +21,6 @@ class NRListeningSessionLogger {
     private static NRListeningSessionLogger _instance;
 
     private AudioManager audioManager;
-
-    private CompositeDisposable disposable = new CompositeDisposable();
 
     public static NRListeningSessionLogger getInstance() {
         if (_instance == null) {
@@ -61,20 +57,15 @@ class NRListeningSessionLogger {
         if (getCurrentVolume() <= 0 || frequencyHz <= 0) {
             return;
         }
-        disposable.clear();
-        disposable.add(Observable.fromCallable(() -> isEqualToCurrentTune(frequencyHz, frequencySubChannel, deliveryType))
-                .subscribeOn(Schedulers.computation())
-                .subscribe(isSameStation -> {
-                    //end current session before inserting new one
-                    if (!isSameStation) {
-                        endCurrentListeningSession();
-                        createNewListeningSession(frequencyHz, frequencySubChannel, deliveryType, callLetters);
-                        NRReportingTracker.getInstance().reportDataToServer();
-                    } else {
-                        //update current listening session with current time stamp
-                        updateListeningSession();
-                    }
-                }, Throwable::printStackTrace));
+        boolean isSameStation = isEqualToCurrentTune(frequencyHz, frequencySubChannel, deliveryType);
+        if (!isSameStation) {
+            endCurrentListeningSession();
+            createNewListeningSession(frequencyHz, frequencySubChannel, deliveryType, callLetters);
+            NRReportingTracker.getInstance().reportDataToServer();
+        } else {
+            //update current listening session with current time stamp
+            updateListeningSession();
+        }
     }
 
     private void createNewListeningSession(long frequencyHz, int frequencySubChannel, int deliveryType, String callLetters) {
@@ -94,7 +85,7 @@ class NRListeningSessionLogger {
                 Location location = NRLocationAdapter.getInstance().getCurrentLocation();
                 if (location != null) {
                     jsonObject.put("latitude", Double.toString(location.getLatitude()));
-                    jsonObject.put("longitude", Double.toString(location.getLatitude()));
+                    jsonObject.put("longitude", Double.toString(location.getLongitude()));
                 } else {
                     jsonObject.put("latitude", "null");
                     jsonObject.put("longitude", "null");

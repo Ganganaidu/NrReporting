@@ -10,8 +10,7 @@ import java.net.URLEncoder;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import io.reactivex.Observable;
-import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
 import nextradio.nranalytics.objects.reporting.Meta;
 import nextradio.nranalytics.objects.reporting.ReportingDataObject;
@@ -30,7 +29,7 @@ public class NRReportingTracker {
 
     private static NRReportingTracker _instance;
 
-    private CompositeDisposable disposable = new CompositeDisposable();
+    //private CompositeDisposable disposable = new CompositeDisposable();
 
     private boolean isDataSendingToServer;
 
@@ -47,10 +46,10 @@ public class NRReportingTracker {
     void reportDataToServer() {
         Log.d(TAG, "reportDataToServer: " + isDataSendingToServer);
         if (!isDataSendingToServer) {
-            disposable.clear();
-            disposable.add(Observable.fromCallable(NRReportingTracker.this::getReportingData)
+            isDataSendingToServer = true;
+            Single.fromCallable(NRReportingTracker.this::getReportingData)
                     .subscribeOn(Schedulers.computation())
-                    .subscribe(this::createWebReportingRequest, this::handleError));
+                    .subscribe(this::createWebReportingRequest, this::handleError);
         }
     }
 
@@ -63,7 +62,7 @@ public class NRReportingTracker {
                     .subscribe(() -> {
                         Log.d(TAG, "data send completed: ");
                         //we need this timer to avoid multiple requests (duplicate data)
-                        Observable.timer(4, TimeUnit.SECONDS).subscribe(aLong -> {
+                        Single.timer(2, TimeUnit.SECONDS).subscribe(aLong -> {
                             NRPersistedAppStorage.getInstaince().clearReportingData();
                             isDataSendingToServer = false;
                         });
