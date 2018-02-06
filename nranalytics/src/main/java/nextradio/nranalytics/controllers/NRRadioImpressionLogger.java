@@ -77,7 +77,7 @@ class NRRadioImpressionLogger {
                 Location location = NRLocationAdapter.getInstance().getCurrentLocation();
                 if (location != null) {
                     jsonObject.put("latitude", Double.toString(location.getLatitude()));
-                    jsonObject.put("longitude", Double.toString(location.getLatitude()));
+                    jsonObject.put("longitude", Double.toString(location.getLongitude()));
                 } else {
                     jsonObject.put("latitude", "null");
                     jsonObject.put("longitude", "null");
