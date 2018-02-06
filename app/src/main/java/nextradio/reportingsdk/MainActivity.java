@@ -55,9 +55,10 @@ public class MainActivity extends AppCompatActivity {
         Button textView = findViewById(R.id.text);//send Data
         textView.setOnClickListener(view -> {
             //NextRadioReportingSDK.stopListeningSession();
-            NextRadioReportingSDK.startListeningSession(93100000, 2, 2, "WXRT");
-            NextRadioReportingSDK.stopListeningSession();
-            NextRadioReportingSDK.startListeningSession(93200000, 2, 2, "WXRT");
+//            NextRadioReportingSDK.startListeningSession(93100000, 2, 2, "WXRT");
+            //NextRadioReportingSDK.stopListeningSession();
+            NextRadioReportingSDK.startListeningSession(105900000, 0, 1, "WTMX");
+            NextRadioReportingSDK.startListeningSession(106900000, 2, 2, "WXRT");
             //NextRadioReportingSDK.stopListeningSession();
             // NextRadioReportingSDK.startListeningSession(93300000, 2, 2, "WXRT");
             //NextRadioReportingSDK.stopListeningSession();

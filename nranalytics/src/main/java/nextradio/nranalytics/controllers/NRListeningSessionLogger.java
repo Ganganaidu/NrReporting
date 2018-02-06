@@ -6,7 +6,6 @@ import android.media.AudioManager;
 
 import org.json.JSONObject;
 
-import io.reactivex.disposables.CompositeDisposable;
 import nextradio.nranalytics.utils.AppUtils;
 import nextradio.nranalytics.utils.DateUtils;
 import nextradio.nranalytics.utils.GsonConverter;
@@ -81,6 +80,7 @@ class NRListeningSessionLogger {
             jsonObject.put("callLetters", callLetters);
             jsonObject.put("endTime", currentUTCString);
             jsonObject.put("isEnded", false);
+            ///jsonObject.put("dataSuccess", false);
             try {
                 Location location = NRLocationAdapter.getInstance().getCurrentLocation();
                 if (location != null) {

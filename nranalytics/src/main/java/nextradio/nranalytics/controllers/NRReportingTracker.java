@@ -8,7 +8,6 @@ import org.json.JSONObject;
 
 import java.net.URLEncoder;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
@@ -62,10 +61,8 @@ public class NRReportingTracker {
                     .subscribe(() -> {
                         Log.d(TAG, "data send completed: ");
                         //we need this timer to avoid multiple requests (duplicate data)
-                        Single.timer(2, TimeUnit.SECONDS).subscribe(aLong -> {
-                            NRPersistedAppStorage.getInstaince().clearReportingData();
-                            isDataSendingToServer = false;
-                        });
+                        NRPersistedAppStorage.getInstaince().clearReportingData();
+                        isDataSendingToServer = false;
                     }, this::handleError);
         } catch (Exception e) {
             e.printStackTrace();

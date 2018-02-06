@@ -72,6 +72,7 @@ class NRRadioImpressionLogger {
             jsonObject.put("frequencyHz", String.valueOf(frequencyHz));
             jsonObject.put("frequencySubChannel", String.valueOf(frequencySubChannel));
             jsonObject.put("callLetters", callLetters);
+            //jsonObject.put("dataSuccess", false);
             try {
                 Location location = NRLocationAdapter.getInstance().getCurrentLocation();
                 if (location != null) {
