@@ -12,7 +12,7 @@ import nextradio.nranalytics.objects.registerdevice.DeviceRegResponseInfo;
 
 public class NRPersistedAppStorage {
 
-    private static final String TAG = "NRPersistedAppStorage";
+   // private static final String TAG = "NRPersistedAppStorage";
 
     private static final String DefaultTAGURL = "http://dev-api.tagstation.com/";
 
@@ -84,8 +84,8 @@ public class NRPersistedAppStorage {
         if (deviceInfo == null) {
             return;
         }
-        Log.d(TAG, "getTsd: " + deviceInfo.getTsd());
-        Log.d(TAG, "getCachingGroup: " + deviceInfo.getCachingGroup());
+      // Log.d(TAG, "getTsd: " + deviceInfo.getTsd());
+        //Log.d(TAG, "getCachingGroup: " + deviceInfo.getCachingGroup());
         prefsEditor
                 .putString(DEVICE_ID, deviceInfo.getTsd())
                 .putString(CACHING_ID, deviceInfo.getCachingGroup())

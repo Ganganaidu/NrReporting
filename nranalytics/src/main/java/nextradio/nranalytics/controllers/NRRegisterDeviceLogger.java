@@ -50,7 +50,7 @@ class NRRegisterDeviceLogger {
         String newDeviceRegistrationString = deviceState.getUpdateString();
 
         Log.d(TAG, "register: " + deviceRegistration.getData().toString());
-        Log.d(TAG, "getDeviceId: " + NRPersistedAppStorage.getInstaince().getDeviceId());
+       // Log.d(TAG, "getDeviceId: " + NRPersistedAppStorage.getInstaince().getDeviceId());
 
         if (!isFullyRegistered() || lastDeviceRegistrationString == null) { //new registration
             TagStationApiClientRequest.getInstance()
@@ -77,14 +77,14 @@ class NRRegisterDeviceLogger {
     }
 
     private void saveDeviceRegResponse(DeviceRegResponse deviceRegResponse) {
-        Log.d(TAG, "saveDeviceRegResponse: " + deviceRegResponse.getData().getTsd());
+       // Log.d(TAG, "saveDeviceRegResponse: " + deviceRegResponse.getData().getTsd());
         NRPersistedAppStorage.getInstaince().setDeviceRegistration(deviceRegResponse.getData());
         NRPersistedAppStorage.getInstaince().setDeviceId(deviceRegResponse.getData().getTsd());
     }
 
     private void handleError(Throwable error) {
         //reg failed
-        Log.d(TAG, "handleError: " + error.getLocalizedMessage());
+       // Log.d(TAG, "handleError: " + error.getLocalizedMessage());
     }
 
     private boolean isFullyRegistered() {

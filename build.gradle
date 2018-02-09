@@ -18,7 +18,10 @@ allprojects {
     repositories {
         jcenter()
         maven { url 'https://maven.google.com' }
-        maven { url 'https://jitpack.io' }
+        //maven { url 'https://jitpack.io' }
+        //maven { url "https://dl.bintray.com/gkondati/nr_reporting_sdk" }
+//        maven { url 'http://poc-android-sdk-gradle-repo.s3-website-us-east-1.amazonaws.com' }
+        maven { url 'http://s3.nextradioapp.com.s3-website-us-east-1.amazonaws.com' }
     }
 }
 

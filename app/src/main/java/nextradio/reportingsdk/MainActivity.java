@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        NextRadioReportingSDK.activateApp();
+        NextRadioAnalyticsHelper.activateApp();
 
         Button register = findViewById(R.id.register);
         register.setOnClickListener(view -> NextRadioReportingSDK.registerApp("sdk test"));
@@ -42,13 +42,13 @@ public class MainActivity extends AppCompatActivity {
         listening.setOnClickListener(view -> {
             data = data + 1;
             if (data == 1) {
-                NextRadioReportingSDK.startListeningSession(93100000, 2, 2, "WXRT");
+                NextRadioAnalyticsHelper.startListeningSession(93100000, 2, 2, "WXRT");
             } else if (data == 2) {
-                NextRadioReportingSDK.startListeningSession(102900000, 0, 1, "WTMX");
+                NextRadioAnalyticsHelper.startListeningSession(102900000, 0, 1, "WTMX");
             } else if (data == 3) {
-                NextRadioReportingSDK.startListeningSession(103900000, 0, 1, "WTMX");
+                NextRadioAnalyticsHelper.startListeningSession(103900000, 0, 1, "WTMX");
             } else if (data == 4) {
-                NextRadioReportingSDK.startListeningSession(104900000, 0, 1, "WTMX");
+                NextRadioAnalyticsHelper.startListeningSession(104900000, 0, 1, "WTMX");
             }
         });
 
@@ -57,8 +57,8 @@ public class MainActivity extends AppCompatActivity {
             //NextRadioReportingSDK.stopListeningSession();
 //            NextRadioReportingSDK.startListeningSession(93100000, 2, 2, "WXRT");
             //NextRadioReportingSDK.stopListeningSession();
-            NextRadioReportingSDK.startListeningSession(105900000, 0, 1, "WTMX");
-            NextRadioReportingSDK.startListeningSession(106900000, 2, 2, "WXRT");
+            NextRadioAnalyticsHelper.startListeningSession(105900000, 0, 1, "WTMX");
+            NextRadioAnalyticsHelper.startListeningSession(106900000, 2, 2, "WXRT");
             //NextRadioReportingSDK.stopListeningSession();
             // NextRadioReportingSDK.startListeningSession(93300000, 2, 2, "WXRT");
             //NextRadioReportingSDK.stopListeningSession();
@@ -67,14 +67,14 @@ public class MainActivity extends AppCompatActivity {
         Button updateData = findViewById(R.id.updateData);
         updateData.setOnClickListener(view -> {
                     //NRListeningSessionLogger.getInstance().updateListeningSession();
-                    NextRadioReportingSDK.recordRadioImpressionEvent("", "",
+            NextRadioAnalyticsHelper.recordRadioImpressionEvent("", "",
                             "Data", 101900000, 1, 0, "WTMX");
                 }
         );
 
         Button stopListening = findViewById(R.id.stopBtn);
         stopListening.setOnClickListener(view -> {
-            NextRadioReportingSDK.stopListeningSession();
+            NextRadioAnalyticsHelper.stopListeningSession();
         });
     }
 
@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        //  NextRadioReportingSDK.deActivateApp();
+        NextRadioAnalyticsHelper.deActivateApp();
     }
 
     /**

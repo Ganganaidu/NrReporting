@@ -47,7 +47,7 @@ dependencies {
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     //compile 'com.github.Ganganaidu.NrReporting:nranalytics:0.0.3'
 
-    compile project(':nranalytics')
+    //compile project(':nranalytics')
     compile 'com.android.support:support-v4:26.1.0'
-    //compile 'com.nextradio:nranalytics:0.0.2'
+    compile 'com.nextradio:nextradioreporting:+'
 }

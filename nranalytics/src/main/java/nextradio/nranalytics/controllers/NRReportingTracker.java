@@ -24,7 +24,7 @@ import nextradio.nranalytics.web.TagStationApiClientRequest;
 
 public class NRReportingTracker {
 
-    private static final String TAG = "NRReportingTracker";
+   // private static final String TAG = "NRReportingTracker";
 
     private static NRReportingTracker _instance;
 
@@ -43,7 +43,7 @@ public class NRReportingTracker {
     }
 
     void reportDataToServer() {
-        Log.d(TAG, "reportDataToServer: " + isDataSendingToServer);
+       // Log.d(TAG, "reportDataToServer: " + isDataSendingToServer);
         if (!isDataSendingToServer) {
             isDataSendingToServer = true;
             Single.fromCallable(NRReportingTracker.this::getReportingData)
@@ -53,13 +53,13 @@ public class NRReportingTracker {
     }
 
     private void createWebReportingRequest(ReportingDataObject<Object> reportingDataObject) {
-        Log.d(TAG, "deviceID: " + NRPersistedAppStorage.getInstaince().getDeviceId());
+       // Log.d(TAG, "deviceID: " + NRPersistedAppStorage.getInstaince().getDeviceId());
         try {
             TagStationApiClientRequest.getInstance()
                     .reportData(URLEncoder.encode(NRPersistedAppStorage.getInstaince().getDeviceId(), "UTF-8"), reportingDataObject)
                     .subscribeOn(Schedulers.io())
                     .subscribe(() -> {
-                        Log.d(TAG, "data send completed: ");
+                       // Log.d(TAG, "data send completed: ");
                         //we need this timer to avoid multiple requests (duplicate data)
                         NRPersistedAppStorage.getInstaince().clearReportingData();
                         isDataSendingToServer = false;

@@ -15,7 +15,7 @@ import nextradio.nranalytics.utils.GsonConverter;
  */
 
 class NRListeningSessionLogger {
-    private static final String TAG = "NRListeningSession";
+   // private static final String TAG = "NRListeningSession";
 
     private static NRListeningSessionLogger _instance;
 
