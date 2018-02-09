@@ -13,7 +13,7 @@ import io.reactivex.schedulers.Schedulers;
  */
 
 class NRTimer {
-    private static final String TAG = "NRTimer";
+    //private static final String TAG = "NRTimer";
 
     private static NRTimer _instance;
 
@@ -31,12 +31,12 @@ class NRTimer {
     }
 
     void create2MinTimer() {
-        Log.d(TAG, "start 2MinTimer: ");
+        //Log.d(TAG, "start 2MinTimer: ");
         disposable.clear();
         disposable.add(Observable.interval(2, TimeUnit.MINUTES)
                 .subscribeOn(Schedulers.single())
                 .subscribe(aLong -> {
-                    Log.d(TAG, "update 2Min Timer: ");
+                    //Log.d(TAG, "update 2Min Timer: ");
 
                     //if there is no location updates or location updates not started for some reason, try to check again
                     if (!NRLocationAdapter.getInstance().isLocationUpdatesStarted()) {

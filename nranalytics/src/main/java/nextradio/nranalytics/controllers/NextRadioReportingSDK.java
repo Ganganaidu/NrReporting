@@ -9,7 +9,7 @@ import android.app.Application;
 
 public class NextRadioReportingSDK {
 
-    private static final String TAG = "NextRadioReportingSDK";
+    //private static final String TAG = "NextRadioReportingSDK";
 
     static String SDK_VERSION = "1.0.2";
 

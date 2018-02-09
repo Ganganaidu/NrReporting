@@ -71,7 +71,7 @@ public class NRReportingTracker {
 
     private void handleError(Throwable error) {
         //reg failed
-        Log.d(TAG, "handleError: " + error.getLocalizedMessage());
+       // Log.d(TAG, "handleError: " + error.getLocalizedMessage());
         isDataSendingToServer = false;
     }
 
@@ -99,7 +99,7 @@ public class NRReportingTracker {
         addData(reportingDataObject, currentListingData);
         addData(reportingDataObject, radioImpressionData);
 
-        Log.d(TAG, "reportDataToServer: " + GsonConverter.getInstance().serializeToJson(reportingDataObject));
+        //Log.d(TAG, "reportDataToServer: " + GsonConverter.getInstance().serializeToJson(reportingDataObject));
 
         return reportingDataObject;
     }

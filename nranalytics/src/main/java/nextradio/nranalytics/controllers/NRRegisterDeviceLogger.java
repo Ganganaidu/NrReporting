@@ -49,8 +49,8 @@ class NRRegisterDeviceLogger {
         String lastDeviceRegistrationString = NRPersistedAppStorage.getInstaince().getDeviceString();
         String newDeviceRegistrationString = deviceState.getUpdateString();
 
-        Log.d(TAG, "register: " + deviceRegistration.getData().toString());
-       // Log.d(TAG, "getDeviceId: " + NRPersistedAppStorage.getInstaince().getDeviceId());
+        //Log.d(TAG, "register: " + deviceRegistration.getData().toString());
+        Log.d(TAG, "getDeviceId: " + NRPersistedAppStorage.getInstaince().getDeviceId());
 
         if (!isFullyRegistered() || lastDeviceRegistrationString == null) { //new registration
             TagStationApiClientRequest.getInstance()

@@ -20,7 +20,7 @@ import nextradio.nranalytics.utils.GsonConverter;
  */
 
 class NRSessionLogger {
-    private static final String TAG = "NRSessionLogger";
+   // private static final String TAG = "NRSessionLogger";
 
     private Timer mSessionTimer;
     private static NRSessionLogger instance;
