@@ -6,6 +6,7 @@ import java.net.URLEncoder;
 import java.util.Locale;
 
 import io.reactivex.Observable;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import nextradio.nranalytics.objects.registerdevice.DeviceRegResponse;
 import nextradio.nranalytics.objects.registerdevice.DeviceRegistration;
@@ -20,6 +21,7 @@ class NRRegisterDeviceLogger {
     private static final String TAG = "NRRegisterDeviceLogger";
 
     private NRDeviceDescriptor deviceDescriptor;
+    private CompositeDisposable disposable = new CompositeDisposable();
 
     NRRegisterDeviceLogger() {
         deviceDescriptor = new NRDeviceDescriptor(NRAppContext.getAppContext());
@@ -32,9 +34,9 @@ class NRRegisterDeviceLogger {
      * @param radioSourceName : send "unknown" if no radio source
      */
     void registerDevice(String radioSourceName, String fmSourceName) {
-        Observable.fromCallable(() -> deviceDescriptor.getDeviceDescription(radioSourceName, fmSourceName))
+        disposable.add(Observable.fromCallable(() -> deviceDescriptor.getDeviceDescription(radioSourceName, fmSourceName))
                 .subscribeOn(Schedulers.io())
-                .subscribe(this::register, Throwable::printStackTrace);
+                .subscribe(this::register, Throwable::printStackTrace));
     }
 
     /**
@@ -46,30 +48,30 @@ class NRRegisterDeviceLogger {
         deviceState.setLocale(Locale.getDefault().toString());
         deviceRegistration.setData(deviceState);
 
-        String lastDeviceRegistrationString = NRPersistedAppStorage.getInstaince().getDeviceString();
+        String lastDeviceRegistrationString = NRPersistedAppStorage.getInstance().getDeviceString();
         String newDeviceRegistrationString = deviceState.getUpdateString();
 
         //Log.d(TAG, "register: " + deviceRegistration.getData().toString());
-        Log.d(TAG, "getDeviceId: " + NRPersistedAppStorage.getInstaince().getDeviceId());
+        Log.d(TAG, "getDeviceId: " + NRPersistedAppStorage.getInstance().getDeviceId());
 
         if (!isFullyRegistered() || lastDeviceRegistrationString == null) { //new registration
-            TagStationApiClientRequest.getInstance()
+            disposable.add(TagStationApiClientRequest.getInstance()
                     .registerDevice(deviceRegistration)
                     .subscribeOn(Schedulers.io())
                     .subscribe(deviceRegResponse -> {
-                        NRPersistedAppStorage.getInstaince().setDeviceString(newDeviceRegistrationString);
+                        NRPersistedAppStorage.getInstance().setDeviceString(newDeviceRegistrationString);
                         saveDeviceRegResponse(deviceRegResponse);
-                    }, this::handleError);
+                    }, this::handleError));
 
         } else if (!lastDeviceRegistrationString.equals(newDeviceRegistrationString)) {//update
             try {
-                TagStationApiClientRequest.getInstance()
-                        .updateRegisteredDevice(URLEncoder.encode(NRPersistedAppStorage.getInstaince().getDeviceId(), "UTF-8"), deviceRegistration)
+                disposable.add(TagStationApiClientRequest.getInstance()
+                        .updateRegisteredDevice(URLEncoder.encode(NRPersistedAppStorage.getInstance().getDeviceId(), "UTF-8"), deviceRegistration)
                         .subscribeOn(Schedulers.io())
                         .subscribe(deviceRegResponse -> {
-                            NRPersistedAppStorage.getInstaince().setDeviceString(newDeviceRegistrationString);
+                            NRPersistedAppStorage.getInstance().setDeviceString(newDeviceRegistrationString);
                             saveDeviceRegResponse(deviceRegResponse);
-                        }, this::handleError);
+                        }, this::handleError));
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -77,18 +79,22 @@ class NRRegisterDeviceLogger {
     }
 
     private void saveDeviceRegResponse(DeviceRegResponse deviceRegResponse) {
-       // Log.d(TAG, "saveDeviceRegResponse: " + deviceRegResponse.getData().getTsd());
-        NRPersistedAppStorage.getInstaince().setDeviceRegistration(deviceRegResponse.getData());
-        NRPersistedAppStorage.getInstaince().setDeviceId(deviceRegResponse.getData().getTsd());
+        // Log.d(TAG, "saveDeviceRegResponse: " + deviceRegResponse.getData().getTsd());
+        NRPersistedAppStorage.getInstance().setDeviceRegistration(deviceRegResponse.getData());
+        NRPersistedAppStorage.getInstance().setDeviceId(deviceRegResponse.getData().getTsd());
     }
 
     private void handleError(Throwable error) {
         //reg failed
-       // Log.d(TAG, "handleError: " + error.getLocalizedMessage());
+        Log.d(TAG, "handleError: " + error.getLocalizedMessage());
     }
 
     private boolean isFullyRegistered() {
-        String deviceId = NRPersistedAppStorage.getInstaince().getDeviceId();
+        String deviceId = NRPersistedAppStorage.getInstance().getDeviceId();
         return deviceId != null && deviceId.length() > 0;
+    }
+
+    private void clear() {
+        disposable.clear();
     }
 }

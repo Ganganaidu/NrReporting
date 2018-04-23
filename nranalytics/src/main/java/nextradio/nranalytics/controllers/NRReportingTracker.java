@@ -1,6 +1,7 @@
 package nextradio.nranalytics.controllers;
 
-import android.util.Log;
+import android.annotation.SuppressLint;
+import android.os.Debug;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -24,7 +25,7 @@ import nextradio.nranalytics.web.TagStationApiClientRequest;
 
 public class NRReportingTracker {
 
-   // private static final String TAG = "NRReportingTracker";
+    // private static final String TAG = "NRReportingTracker";
 
     private static NRReportingTracker _instance;
 
@@ -42,8 +43,9 @@ public class NRReportingTracker {
     private NRReportingTracker() {
     }
 
+    @SuppressLint("CheckResult")
     void reportDataToServer() {
-       // Log.d(TAG, "reportDataToServer: " + isDataSendingToServer);
+        // Log.d(TAG, "reportDataToServer: " + isDataSendingToServer);
         if (!isDataSendingToServer) {
             isDataSendingToServer = true;
             Single.fromCallable(NRReportingTracker.this::getReportingData)
@@ -52,16 +54,17 @@ public class NRReportingTracker {
         }
     }
 
+    @SuppressLint("CheckResult")
     private void createWebReportingRequest(ReportingDataObject<Object> reportingDataObject) {
-       // Log.d(TAG, "deviceID: " + NRPersistedAppStorage.getInstaince().getDeviceId());
+        // Log.d(TAG, "deviceID: " + NRPersistedAppStorage.getInstance().getDeviceId());
         try {
             TagStationApiClientRequest.getInstance()
-                    .reportData(URLEncoder.encode(NRPersistedAppStorage.getInstaince().getDeviceId(), "UTF-8"), reportingDataObject)
+                    .reportData(URLEncoder.encode(NRPersistedAppStorage.getInstance().getDeviceId(), "UTF-8"), reportingDataObject)
                     .subscribeOn(Schedulers.io())
                     .subscribe(() -> {
-                       // Log.d(TAG, "data send completed: ");
+                        // Log.d(TAG, "data send completed: ");
                         //we need this timer to avoid multiple requests (duplicate data)
-                        NRPersistedAppStorage.getInstaince().clearReportingData();
+                        NRPersistedAppStorage.getInstance().clearReportingData();
                         isDataSendingToServer = false;
                     }, this::handleError);
         } catch (Exception e) {
@@ -71,17 +74,17 @@ public class NRReportingTracker {
 
     private void handleError(Throwable error) {
         //reg failed
-       // Log.d(TAG, "handleError: " + error.getLocalizedMessage());
+        // Log.d(TAG, "handleError: " + error.getLocalizedMessage());
         isDataSendingToServer = false;
     }
 
     private ReportingDataObject<Object> getReportingData() {
         isDataSendingToServer = true;
         String utcOffset = recordUtcOffset();
-        String locationData = NRPersistedAppStorage.getInstaince().getLocationData();
-        String listeningSessionData = NRPersistedAppStorage.getInstaince().getListeningData();
+        String locationData = NRPersistedAppStorage.getInstance().getLocationData();
+        String listeningSessionData = NRPersistedAppStorage.getInstance().getListeningData();
         String currentListingData = currentListeningSession();
-        String radioImpressionData = NRPersistedAppStorage.getInstaince().getRadioEventImpression();
+        String radioImpressionData = NRPersistedAppStorage.getInstance().getRadioEventImpression();
 
         ReportingDataObject<Object> reportingDataObject = new ReportingDataObject<>();
         reportingDataObject.setMeta(new Meta().setVersion(NextRadioReportingSDK.SDK_VERSION));
@@ -124,7 +127,7 @@ public class NRReportingTracker {
      * device UTC as close as possible to when the PUT is being made to the API endpoint
      */
     private String recordUtcOffset() {
-        if (NRPersistedAppStorage.getInstaince().getUTcOfSetUpdateFlag()) {
+        if (NRPersistedAppStorage.getInstance().getUTcOfSetUpdateFlag()) {
             //need to send UTC offset data only once per day
             JSONArray jsonArray = new JSONArray();
             JSONObject utcJsonObject = new JSONObject();
@@ -132,7 +135,7 @@ public class NRReportingTracker {
                 utcJsonObject.put("type", "Utc.Offset");
                 utcJsonObject.put("clientRequestTime", DateUtils.getCurrentUtcTime());
                 jsonArray.put(utcJsonObject);
-                NRPersistedAppStorage.getInstaince().setUtcSendFlag(false);
+                NRPersistedAppStorage.getInstance().setUtcSendFlag(false);
                 return jsonArray.toString();
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -142,7 +145,7 @@ public class NRReportingTracker {
     }
 
     private String currentListeningSession() {
-        String currentSession = NRPersistedAppStorage.getInstaince().getCurrentListeningData();
+        String currentSession = NRPersistedAppStorage.getInstance().getCurrentListeningData();
         if (currentSession != null && !currentSession.isEmpty()) {
             try {
                 JSONArray jsonArray = new JSONArray();

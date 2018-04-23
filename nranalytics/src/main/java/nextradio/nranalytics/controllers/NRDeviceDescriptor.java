@@ -21,7 +21,7 @@ import java.util.Locale;
 import nextradio.nranalytics.objects.registerdevice.DeviceRegistrationData;
 
 class NRDeviceDescriptor {
-   // private static final String TAG = "NRDeviceDescriptor";
+    // private static final String TAG = "NRDeviceDescriptor";
 
 
     private Context mContext;

@@ -5,9 +5,10 @@ buildscript {
     repositories {
         maven { url 'https://maven.google.com' }
         jcenter()
+        google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.2.3'
+        classpath 'com.android.tools.build:gradle:3.1.1'
 
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7'
         classpath 'com.github.dcendents:android-maven-gradle-plugin:1.5'
@@ -19,8 +20,9 @@ allprojects {
         jcenter()
         maven { url 'https://maven.google.com' }
         //maven { url "https://dl.bintray.com/gkondati/nr_reporting_sdk" }
-        maven { url 'http://s3.nextradioapp.com.s3-website-us-east-1.amazonaws.com' }
+        maven { url 'https://code.nextradioapp.com' }
     }
 }
+
 
 

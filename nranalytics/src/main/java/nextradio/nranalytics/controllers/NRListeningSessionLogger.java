@@ -94,7 +94,7 @@ class NRListeningSessionLogger {
                 e.printStackTrace();
             }
 
-            NRPersistedAppStorage.getInstaince().saveCurrentListeningData(jsonObject.toString());
+            NRPersistedAppStorage.getInstance().saveCurrentListeningData(jsonObject.toString());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -102,12 +102,12 @@ class NRListeningSessionLogger {
 
     void updateListeningSession() {
         try {
-            String currentSession = NRPersistedAppStorage.getInstaince().getCurrentListeningData();
+            String currentSession = NRPersistedAppStorage.getInstance().getCurrentListeningData();
             //Log.d(TAG, "updateListeningSession: "+currentSession);
             if (!AppUtils.isNullOrEmpty(currentSession)) {
                 JSONObject jsonObject = new JSONObject(currentSession);
                 jsonObject.putOpt("endTime", DateUtils.getCurrentUtcTime());
-                NRPersistedAppStorage.getInstaince().saveCurrentListeningData(jsonObject.toString());
+                NRPersistedAppStorage.getInstance().saveCurrentListeningData(jsonObject.toString());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -115,17 +115,17 @@ class NRListeningSessionLogger {
     }
 
     void endCurrentListeningSession() {
-        String previousSessionValue = NRPersistedAppStorage.getInstaince().getCurrentListeningData();
+        String previousSessionValue = NRPersistedAppStorage.getInstance().getCurrentListeningData();
         try {
             //Log.d(TAG, "updateListeningSession: "+previousSessionValue);
             if (!AppUtils.isNullOrEmpty(previousSessionValue)) {
                 JSONObject jsonObject = new JSONObject(previousSessionValue);
                 jsonObject.put("endTime", DateUtils.getCurrentUtcTime());
                 jsonObject.put("isEnded", true);
-                NRPersistedAppStorage.getInstaince().saveCurrentListeningData("");
+                NRPersistedAppStorage.getInstance().saveCurrentListeningData("");
 
-                String data = GsonConverter.getInstance().createJsonObjectToString(NRPersistedAppStorage.getInstaince().getListeningData(), jsonObject);
-                NRPersistedAppStorage.getInstaince().saveListeningData(data);
+                String data = GsonConverter.getInstance().createJsonObjectToString(NRPersistedAppStorage.getInstance().getListeningData(), jsonObject);
+                NRPersistedAppStorage.getInstance().saveListeningData(data);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -133,7 +133,7 @@ class NRListeningSessionLogger {
     }
 
     private boolean isEqualToCurrentTune(long frequencyHz, int frequencySubChannel, int deliveryType) {
-        String currentListeningData = NRPersistedAppStorage.getInstaince().getCurrentListeningData();
+        String currentListeningData = NRPersistedAppStorage.getInstance().getCurrentListeningData();
         try {
             if (!AppUtils.isNullOrEmpty(currentListeningData)) {
                 JSONObject jsonObject = new JSONObject(currentListeningData);

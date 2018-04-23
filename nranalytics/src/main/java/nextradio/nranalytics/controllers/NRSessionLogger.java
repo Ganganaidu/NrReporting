@@ -83,7 +83,7 @@ class NRSessionLogger {
      * </p>
      */
     private void recordAppSession() {
-        String savedValue = NRPersistedAppStorage.getInstaince().getAppSessionData();
+        String savedValue = NRPersistedAppStorage.getInstance().getAppSessionData();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSSS", Locale.ENGLISH);
         String uniqueId = sdf.format(new Date());
 
@@ -102,11 +102,11 @@ class NRSessionLogger {
                 jsonObject.put("type", "Session.AppSession"); //getNewBatchId()
 
                 String data = GsonConverter.getInstance().createJsonObjectToString(savedValue, jsonObject);
-                NRPersistedAppStorage.getInstaince().saveAppSessionData(data);
+                NRPersistedAppStorage.getInstance().saveAppSessionData(data);
             } else {
                 jsonObject = GsonConverter.getInstance().updateSessionEndTime(savedValue, currentUTCString);
                 String data = GsonConverter.getInstance().updateJsonObject(savedValue, jsonObject);
-                NRPersistedAppStorage.getInstaince().saveAppSessionData(data);
+                NRPersistedAppStorage.getInstance().saveAppSessionData(data);
             }
         } catch (JSONException e) {
             e.printStackTrace();

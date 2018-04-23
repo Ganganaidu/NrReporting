@@ -283,8 +283,8 @@ class NRLocationAdapter {
 
             saveLocationInStorage(nrLocationObject);
             //save prev values to avoid same location
-            NRPersistedAppStorage.getInstaince().savePreviousLat(String.valueOf(latitude));
-            NRPersistedAppStorage.getInstaince().savePreviousLongitude(String.valueOf(longitude));
+            NRPersistedAppStorage.getInstance().savePreviousLat(String.valueOf(latitude));
+            NRPersistedAppStorage.getInstance().savePreviousLongitude(String.valueOf(longitude));
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -302,8 +302,8 @@ class NRLocationAdapter {
      */
     private void saveLocationInStorage(JSONObject nrLocationObject) {
         try {
-            String data = GsonConverter.getInstance().createJsonObjectToString(NRPersistedAppStorage.getInstaince().getLocationData(), nrLocationObject);
-            NRPersistedAppStorage.getInstaince().saveLocationData(data);
+            String data = GsonConverter.getInstance().createJsonObjectToString(NRPersistedAppStorage.getInstance().getLocationData(), nrLocationObject);
+            NRPersistedAppStorage.getInstance().saveLocationData(data);
            // Log.d(TAG, "saveLocationInStorage: " + data);
         } catch (Exception e) {
             e.printStackTrace();
@@ -392,11 +392,11 @@ class NRLocationAdapter {
     }
 
     //    private boolean isSameLocation(Location location) {
-//        if (NRPersistedAppStorage.getInstaince().getPreviousLat().isEmpty() || NRPersistedAppStorage.getInstaince().getPreviousLongitude().isEmpty()) {
+//        if (NRPersistedAppStorage.getInstance().getPreviousLat().isEmpty() || NRPersistedAppStorage.getInstance().getPreviousLongitude().isEmpty()) {
 //            return false;
 //        }
-//        double lat2 = Double.parseDouble(NRPersistedAppStorage.getInstaince().getPreviousLat());
-//        double lng2 = Double.parseDouble(NRPersistedAppStorage.getInstaince().getPreviousLongitude());
+//        double lat2 = Double.parseDouble(NRPersistedAppStorage.getInstance().getPreviousLat());
+//        double lng2 = Double.parseDouble(NRPersistedAppStorage.getInstance().getPreviousLongitude());
 //        // lat1 and lng1 are the values of a previously stored location
 //        Log.d(TAG, "distance: " + distance(location, lat2, lng2));
 //        return (distance(location, lat2, lng2) < 1.0);

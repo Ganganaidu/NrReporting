@@ -86,8 +86,8 @@ class NRRadioImpressionLogger {
                 e.printStackTrace();
             }
 
-            String data = GsonConverter.getInstance().createJsonObjectToString(NRPersistedAppStorage.getInstaince().getRadioEventImpression(), jsonObject);
-            NRPersistedAppStorage.getInstaince().saveRadioEventImpression(data);
+            String data = GsonConverter.getInstance().createJsonObjectToString(NRPersistedAppStorage.getInstance().getRadioEventImpression(), jsonObject);
+            NRPersistedAppStorage.getInstance().saveRadioEventImpression(data);
 
         } catch (Exception e) {
             e.printStackTrace();
