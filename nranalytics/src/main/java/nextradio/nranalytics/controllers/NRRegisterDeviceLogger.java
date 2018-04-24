@@ -11,7 +11,6 @@ import io.reactivex.schedulers.Schedulers;
 import nextradio.nranalytics.objects.registerdevice.DeviceRegResponse;
 import nextradio.nranalytics.objects.registerdevice.DeviceRegistration;
 import nextradio.nranalytics.objects.registerdevice.DeviceRegistrationData;
-import nextradio.nranalytics.web.TagStationApiClientRequest;
 
 /**
  * Created by gkondati on 11/3/2017.

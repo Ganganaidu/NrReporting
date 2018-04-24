@@ -35,6 +35,19 @@ public class NextRadioReportingSDK {
     }
 
     /**
+     * set app url to dev or prod mode
+     *
+     * @param developmentMode TRUE for production mode, FALSE for dev mode
+     */
+    public void setAppForProductionMode(boolean developmentMode) {
+        if (developmentMode) {
+            NRPersistedAppStorage.getInstance().setTagURL(NRPersistedAppStorage.PROD_TAG_URL);
+        } else {
+            NRPersistedAppStorage.getInstance().setTagURL(NRPersistedAppStorage.DEV_TAG_URL);
+        }
+    }
+
+    /**
      * initialize all classes and variables that we need for this SDK setup
      */
     private static void initLocalObjects() {
@@ -47,15 +60,15 @@ public class NextRadioReportingSDK {
      *
      * @return true if initialized, false if not
      */
-    private static synchronized boolean isInitialized() {
-        return sdkInitialized;
+    private static boolean isInitialized() {
+        return !sdkInitialized;
     }
 
     /**
      * Register application with NextRadio and generate unique ID to identify the application
      */
     public static void registerApp(String radioSourceName) {
-        if (!isInitialized()) {
+        if (isInitialized()) {
             throw new IllegalArgumentException("The NextRadio Reporting sdk must be initialized before calling " + "registerApp");
         }
         registerWithSdk(radioSourceName, null);
@@ -65,7 +78,7 @@ public class NextRadioReportingSDK {
      * Register application with NextRadio and generate unique ID to identify the application
      */
     public static void registerAppWithFmSource(String radioSourceName, String fmSource) {
-        if (!isInitialized()) {
+        if (isInitialized()) {
             throw new IllegalArgumentException("The NextRadio Reporting sdk must be initialized before calling " + "registerApp");
         }
         registerWithSdk(radioSourceName, fmSource);
@@ -76,7 +89,7 @@ public class NextRadioReportingSDK {
      * called whenever your app becomes active, typically in the Activity  onCreate() method of your MainActivity class
      */
     public static void activateApp() {
-        if (!isInitialized()) {
+        if (isInitialized()) {
             throw new IllegalArgumentException("The NextRadio Reporting sdk must be initialized before calling " + "activateApp");
         }
         NRTimer.getInstance().create2MinTimer();
@@ -92,7 +105,7 @@ public class NextRadioReportingSDK {
      * </p>
      */
     public static void deActivateApp() {
-        if (!isInitialized()) {
+        if (isInitialized()) {
             throw new IllegalArgumentException("The NextRadio Reporting sdk must be initialized before calling " + "deActivateApp");
         }
         //NRSessionLogger.getInstance().stopSessionUpdates();
@@ -115,7 +128,7 @@ public class NextRadioReportingSDK {
      * @param callLetters         optional value, callLetters for the station
      */
     public static void startListeningSession(long frequencyHz, int frequencySubChannel, int deliveryType, String callLetters) {
-        if (!isInitialized()) {
+        if (isInitialized()) {
             throw new IllegalArgumentException("The NextRadio Reporting sdk must be initialized before calling " + "startListeningSession");
         }
         NRListeningSessionLogger.getInstance().recordListeningSession(frequencyHz, frequencySubChannel, deliveryType, callLetters);
@@ -127,7 +140,7 @@ public class NextRadioReportingSDK {
      * Call this when your app stops playing FM radio
      */
     public static void stopListeningSession() {
-        if (!isInitialized()) {
+        if (isInitialized()) {
             throw new IllegalArgumentException("The NextRadio Reporting sdk must be initialized before calling " + "stopListeningSession");
         }
         NRListeningSessionLogger.getInstance().endCurrentListeningSession();
@@ -147,7 +160,7 @@ public class NextRadioReportingSDK {
      */
     public static void recordRadioImpressionEvent(String artist, String title, String eventMetadata,
                                                   long frequencyHz, int frequencySubChannel, int deliveryType, String callLetters) {
-        if (!isInitialized()) {
+        if (isInitialized()) {
             throw new IllegalArgumentException("The NextRadio Reporting sdk must be initialized before calling " + "recordRadioImpressionEvent");
         }
         NRRadioImpressionLogger.getInstance().recordRadioImpressionEvent(artist, title, eventMetadata, deliveryType, frequencyHz, frequencySubChannel, callLetters);

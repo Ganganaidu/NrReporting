@@ -23,7 +23,7 @@ class NRRadioImpressionLogger {
 
     private CompositeDisposable disposable = new CompositeDisposable();
 
-    public static NRRadioImpressionLogger getInstance() {
+    static NRRadioImpressionLogger getInstance() {
         if (instance == null) {
             instance = new NRRadioImpressionLogger();
         }

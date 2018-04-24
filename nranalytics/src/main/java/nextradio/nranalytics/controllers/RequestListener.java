@@ -1,9 +1,9 @@
-package nextradio.nranalytics.web;
+package nextradio.nranalytics.controllers;
 
 /**
  * Created by gkondati
  */
-public interface RequestListener<T> {
+interface RequestListener<T> {
 
     void onResponse(T response);
 

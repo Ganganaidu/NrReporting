@@ -1,4 +1,4 @@
-package nextradio.nranalytics.web;
+package nextradio.nranalytics.controllers;
 
 import io.reactivex.Completable;
 import io.reactivex.Observable;
@@ -13,7 +13,7 @@ import retrofit2.http.Query;
 /**
  * Created by gkondati
  */
-public interface RestRequestInterface {
+interface RestRequestInterface {
 
     @POST("registration")
     Observable<DeviceRegResponse> registerDevice(@Body DeviceRegistration carIncident);

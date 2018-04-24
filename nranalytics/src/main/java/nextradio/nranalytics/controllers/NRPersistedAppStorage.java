@@ -1,5 +1,6 @@
 package nextradio.nranalytics.controllers;
 
+import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
@@ -9,11 +10,13 @@ import nextradio.nranalytics.objects.registerdevice.DeviceRegResponseInfo;
  * Created by gkondati on 11/1/2017.
  */
 
-public class NRPersistedAppStorage {
+class NRPersistedAppStorage {
 
     // private static final String TAG = "NRPersistedAppStorage";
 
-    private static final String DefaultTAGURL = "http://api.tagstation.com/";
+    static final String PROD_TAG_URL = "http://api.tagstation.com/sdk/v1.0/";
+    static final String DEV_TAG_URL = "http://dev-api.tagstation.com/sdk/v1.0/";
+
     private static String pckName = "nextradio.nranalytics.";
 
     private static final String OVERRIDE_URL = pckName + "apiurl";
@@ -21,8 +24,6 @@ public class NRPersistedAppStorage {
     private static final String CACHING_ID = pckName + "cachingID";
     private static final String AD_GROUP = pckName + "adGroup";
     private static final String FEED_USER_ID = pckName + "feedUserID";
-    private static final String SELECTED_COUNTRY = pckName + "country";
-    private static final String DEVELOPER_MODE = pckName + "enabledev";
     private static final String DEVICE_STRING = pckName + "DeviceString";
 
     private SharedPreferences appSharedPrefs;
@@ -30,7 +31,7 @@ public class NRPersistedAppStorage {
 
     private static NRPersistedAppStorage nrPersistedAppStorage;
 
-    public static NRPersistedAppStorage getInstance() {
+    static NRPersistedAppStorage getInstance() {
         if (nrPersistedAppStorage == null) {
             nrPersistedAppStorage = new NRPersistedAppStorage();
         }
@@ -40,6 +41,7 @@ public class NRPersistedAppStorage {
     /**
      * Saving data in shared preferences which will store life time of Application
      */
+    @SuppressLint("CommitPrefEdits")
     private NRPersistedAppStorage() {
         appSharedPrefs = PreferenceManager.getDefaultSharedPreferences(NRAppContext.getAppContext());
         this.prefsEditor = appSharedPrefs.edit();
@@ -60,15 +62,7 @@ public class NRPersistedAppStorage {
         return appSharedPrefs.getString(DEVICE_ID, "");
     }
 
-    public void setCachingID(String ID) {
-        prefsEditor.putString(CACHING_ID, ID).apply();
-    }
-
-    public void setAdGroupID(String ID) {
-        prefsEditor.putString(AD_GROUP, ID).apply();
-    }
-
-    public DeviceRegResponseInfo getDeviceRegistrationInfo() {
+    DeviceRegResponseInfo getDeviceRegistrationInfo() {
         String tsd = appSharedPrefs.getString(DEVICE_ID, "");
         String ad = appSharedPrefs.getString(AD_GROUP, "");
         String cache = appSharedPrefs.getString(CACHING_ID, "");
@@ -94,19 +88,15 @@ public class NRPersistedAppStorage {
                 .apply();
     }
 
-    public String getTagURL() {
-        if (appSharedPrefs.getBoolean(DEVELOPER_MODE, false)) {
-            String value = appSharedPrefs.getString(OVERRIDE_URL, null);
-            if (value != null)
-                return value;
-            else
-                return DefaultTAGURL;
-        } else {
-            return DefaultTAGURL;
-        }
+    String getTagURL() {
+        String value = appSharedPrefs.getString(OVERRIDE_URL, null);
+        if (value != null)
+            return value;
+        else
+            return PROD_TAG_URL;
     }
 
-    public void setTagURL(String url) {
+    void setTagURL(String url) {
         prefsEditor.putString(OVERRIDE_URL, url).apply();
     }
 
@@ -119,51 +109,12 @@ public class NRPersistedAppStorage {
         prefsEditor.putString(DEVICE_STRING, newDeviceRegistrationString).apply();
     }
 
-    public String getCountryString() {
-        return appSharedPrefs.getString(SELECTED_COUNTRY, null);
-    }
-
-    public void setCountryString(String countryString) {
-        prefsEditor.putString(SELECTED_COUNTRY, countryString).apply();
-    }
-
-    public void saveVisualImpressions(String visualImpressionData) {
-        prefsEditor.putString(pckName + "visual_impression", visualImpressionData).apply();
-    }
-
-    public String getVisualImpression() {
-        return appSharedPrefs.getString(pckName + "visual_impression", "");
-    }
-
     void saveAppSessionData(String visualImpressionData) {
         prefsEditor.putString(pckName + "app_session", visualImpressionData).apply();
     }
 
     String getAppSessionData() {
         return appSharedPrefs.getString(pckName + "app_session", "");
-    }
-
-    public void saveUTCoffSetData(String visualImpressionData) {
-        prefsEditor.putString(pckName + "UTCoffSetData", visualImpressionData).apply();
-    }
-
-    public String getUtcOffSetData() {
-        return appSharedPrefs.getString(pckName + "UTCoffSetData", "");
-    }
-
-
-    /**
-     * @param date: save UTC date time
-     */
-    public void saveUtcDateTime(String date) {
-        prefsEditor.putString(pckName + "utcCurrentDate", date).apply();
-    }
-
-    /**
-     * @return UTC current date time
-     */
-    public String getUtcDateTime() {
-        return appSharedPrefs.getString(pckName + "utcCurrentDate", "");
     }
 
 
@@ -182,14 +133,6 @@ public class NRPersistedAppStorage {
     }
 
 
-    private void saveLocationTime(String sourceName) {
-        prefsEditor.putString(pckName + "saveLocationTime", sourceName).apply();
-    }
-
-    private String getLocationTime() {
-        return appSharedPrefs.getString(pckName + "saveLocationTime", "");
-    }
-
     /**
      * we need this for comparing current and previous lat to avoid duplicate data
      */
@@ -200,7 +143,7 @@ public class NRPersistedAppStorage {
     /**
      * @return last saved latitude
      */
-    public String getPreviousLat() {
+    String getPreviousLat() {
         return appSharedPrefs.getString(pckName + "savePreviousLat", "");
     }
 
@@ -214,25 +157,9 @@ public class NRPersistedAppStorage {
     /**
      * @return last saved Longitude
      */
-    private String getPreviousLongitude() {
+    String getPreviousLongitude() {
         return appSharedPrefs.getString(pckName + "savePreviousLong", "");
     }
-
-
-    /**
-     * save end time for the current listening session
-     */
-    void saveEndTime(String endTIme) {
-        prefsEditor.putString(pckName + "listeningEndTime", endTIme).apply();
-    }
-
-    /**
-     * @return current listening end time
-     */
-    String getEndTIme() {
-        return appSharedPrefs.getString(pckName + "listeningEndTime", "");
-    }
-
 
     /**
      * save current listening data

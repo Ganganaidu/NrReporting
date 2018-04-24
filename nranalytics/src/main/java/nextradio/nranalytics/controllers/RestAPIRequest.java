@@ -1,4 +1,4 @@
-package nextradio.nranalytics.web;
+package nextradio.nranalytics.controllers;
 
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
@@ -11,26 +11,27 @@ import retrofit2.converter.gson.GsonConverterFactory;
 /**
  * Created by gkondati
  */
-public class RestAPIRequest {
+class RestAPIRequest {
     private static final String TAG = "RestAPIRequest";
 
-    public static String BASE_URL = "http://dev-api.tagstation.com/sdk/v1.0/";
+    private static String BASE_URL;
     private static Retrofit retrofit;
     private static RestAPIRequest instance;
 
-    public static RestAPIRequest getInstance() {
+    static RestAPIRequest getInstance() {
         if (instance == null) {
             instance = new RestAPIRequest();
         }
         return instance;
     }
 
-    public RestAPIRequest withAPIHost(String hostURL) {
+    private RestAPIRequest withAPIHost(String hostURL) {
         BASE_URL = hostURL;
         return this;
     }
 
-    public static Retrofit getRetrofit() {
+    static Retrofit getRetrofit() {
+        BASE_URL = NRPersistedAppStorage.getInstance().getTagURL();
         if (retrofit == null) {
             retrofit = new Retrofit.Builder()
                     .baseUrl(BASE_URL)
@@ -41,21 +42,21 @@ public class RestAPIRequest {
         return retrofit;
     }
 
-    public static Retrofit getXmlRetrofit() {
+    static Retrofit getXmlRetrofit() {
         return new Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
     }
 
-    public void removeRetroObjStack() {
+    void removeRetroObjStack() {
         retrofit = null;
     }
 
     /**
      * Generic method for doing all API requests in the application
      */
-    public <T> void doRequest(Call<T> call, final RequestListener<T> requestListener) {
+    <T> void doRequest(Call<T> call, final RequestListener<T> requestListener) {
         call.enqueue(new Callback<T>() {
 
             @Override

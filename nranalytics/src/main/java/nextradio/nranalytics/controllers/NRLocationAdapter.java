@@ -10,7 +10,6 @@ import android.os.Looper;
 import android.provider.Settings;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -35,7 +34,7 @@ import nextradio.nranalytics.utils.GsonConverter;
  */
 class NRLocationAdapter {
 
-   // private static final String TAG = "NRLocationAdapter";
+    // private static final String TAG = "NRLocationAdapter";
 
     /**
      * The desired interval for location updates. Inexact. Updates may be more or less frequent.
@@ -200,7 +199,7 @@ class NRLocationAdapter {
         // Begin by checking if the device has the necessary location settings.
         mSettingsClient.checkLocationSettings(mLocationSettingsRequest)
                 .addOnSuccessListener(locationSettingsResponse -> {
-                   // Log.i(TAG, "All location settings are satisfied.");
+                    // Log.i(TAG, "All location settings are satisfied.");
                     //noinspection MissingPermission
                     mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
                 })
@@ -209,7 +208,7 @@ class NRLocationAdapter {
                     //location failed
                     mRequestingLocationUpdates = false;
                     mCurrentLocation = null;
-                   // Log.d(TAG, "addOnFailureListener: " + statusCode);
+                    // Log.d(TAG, "addOnFailureListener: " + statusCode);
                     if (locationFailedListener != null) {
                         locationFailedListener.locationFailed(statusCode, e);
                     }
@@ -304,7 +303,7 @@ class NRLocationAdapter {
         try {
             String data = GsonConverter.getInstance().createJsonObjectToString(NRPersistedAppStorage.getInstance().getLocationData(), nrLocationObject);
             NRPersistedAppStorage.getInstance().saveLocationData(data);
-           // Log.d(TAG, "saveLocationInStorage: " + data);
+            // Log.d(TAG, "saveLocationInStorage: " + data);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -379,7 +378,7 @@ class NRLocationAdapter {
     void stopLocationUpdates() {
         try {
             if (!mRequestingLocationUpdates) {
-               // Log.d(TAG, "stopLocationUpdates: updates never requested, no-op.");
+                // Log.d(TAG, "stopLocationUpdates: updates never requested, no-op.");
                 return;
             }
             // It is a good practice to remove location requests when the activity is in a paused or
