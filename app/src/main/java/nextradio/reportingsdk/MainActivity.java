@@ -5,11 +5,10 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Button;
-
-import nextradio.nranalytics.controllers.NextRadioReportingSDK;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -35,8 +34,8 @@ public class MainActivity extends AppCompatActivity {
 
         NextRadioAnalyticsHelper.activateApp();
 
-        Button register = findViewById(R.id.register);
-        register.setOnClickListener(view -> NextRadioReportingSDK.registerApp("sdk test"));
+//        Button register = findViewById(R.id.register);
+//        register.setOnClickListener(view -> NextRadioReportingSDK.registerApp("sdk test"));
 
         Button listening = findViewById(R.id.playBtn);
         listening.setOnClickListener(view -> {
@@ -60,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
         Button updateData = findViewById(R.id.updateData);
         updateData.setOnClickListener(view -> {
                     //NRListeningSessionLogger.getInstance().updateListeningSession();
-            NextRadioAnalyticsHelper.recordRadioImpressionEvent("", "",
+                    NextRadioAnalyticsHelper.recordRadioImpressionEvent("", "",
                             "Data", 101900000, 1, 0, "WTMX");
                 }
         );
@@ -74,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (!checkPermissions()) {
+        if (!checkPermission()) {
             requestPermissions();
         }
     }
@@ -86,26 +85,28 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Return the current state of the permissions needed.
+     * @return TRUE if any one of these location permission are missing or if user denies the location permission
      */
-    private boolean checkPermissions() {
-        int permissionState = ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
-        return permissionState == PackageManager.PERMISSION_GRANTED;
+    private boolean checkPermission() {
+        return ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                || ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
     }
 
     private void requestPermissions() {
-        boolean shouldProvideRationale = ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION);
+        boolean shouldProvideRationale = ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION);
+        boolean shouldProvide = ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION);
 
         // Provide an additional rationale to the user. This would happen if the user denied the
         // request previously, but didn't check the "Don't ask again" checkbox.
-        if (shouldProvideRationale) {
+        if (shouldProvideRationale || shouldProvide) {
             Log.i(TAG, "Displaying permission rationale to provide additional context.");
         } else {
             Log.i(TAG, "Requesting permission");
             // Request permission. It's possible this can be auto answered if device policy
             // sets the permission in a given state or the user denied the permission
             // previously and checked "Never ask again".
-            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_PERMISSIONS_REQUEST_CODE);
+            ActivityCompat.requestPermissions(MainActivity.this,
+                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_PERMISSIONS_REQUEST_CODE);
         }
     }
 

@@ -11,7 +11,6 @@ import android.provider.Settings;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 
-import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -34,7 +33,7 @@ import nextradio.nranalytics.utils.GsonConverter;
  */
 class NRLocationAdapter {
 
-    // private static final String TAG = "NRLocationAdapter";
+    //private static final String TAG = "NRLocationAdapter";
 
     /**
      * The desired interval for location updates. Inexact. Updates may be more or less frequent.
@@ -88,17 +87,6 @@ class NRLocationAdapter {
      * Start Updates and Stop Updates buttons.
      */
     private boolean mRequestingLocationUpdates;
-
-    private double mSpeed = 0;
-
-    private OnLocationFailedListener locationFailedListener;
-
-    /**
-     * we need this failure listener to update user to switch on location when location updates failed to initiate
-     */
-    public interface OnLocationFailedListener {
-        void locationFailed(int code, Exception e);
-    }
 
     private static NRLocationAdapter _instance;
 
@@ -163,9 +151,9 @@ class NRLocationAdapter {
             @Override
             public void onLocationResult(LocationResult locationResult) {
                 super.onLocationResult(locationResult);
+                //Log.d(TAG, "onLocationResult: ");
                 mRequestingLocationUpdates = true;
                 mCurrentLocation = locationResult.getLastLocation();
-
                 onLocationChanged(mCurrentLocation);
             }
         };
@@ -192,35 +180,32 @@ class NRLocationAdapter {
      */
     @SuppressLint("MissingPermission")
     void startLocationUpdates() {
-        if (mRequestingLocationUpdates || checkPermission()) {
+        if (!checkPermission()) {
             return;
         }
 
         // Begin by checking if the device has the necessary location settings.
         mSettingsClient.checkLocationSettings(mLocationSettingsRequest)
                 .addOnSuccessListener(locationSettingsResponse -> {
-                    // Log.i(TAG, "All location settings are satisfied.");
+                    //Log.i(TAG, "All location settings are satisfied.");
                     //noinspection MissingPermission
                     mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
                 })
                 .addOnFailureListener(e -> {
-                    int statusCode = ((ApiException) e).getStatusCode();
+                    //int statusCode = ((ApiException) e).getStatusCode();
                     //location failed
                     mRequestingLocationUpdates = false;
                     mCurrentLocation = null;
-                    // Log.d(TAG, "addOnFailureListener: " + statusCode);
-                    if (locationFailedListener != null) {
-                        locationFailedListener.locationFailed(statusCode, e);
-                    }
+                    //Log.d(TAG, "addOnFailureListener: " + statusCode);
                 });
     }
 
     /**
-     * @return TRUE if any one of these location permission are missing or if user denies the location permission
+     * @return TRUE if any one of these location permission accepted
      */
-    private boolean checkPermission() {
-        return (ContextCompat.checkSelfPermission(NRAppContext.getAppContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
-                ContextCompat.checkSelfPermission(NRAppContext.getAppContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED);
+    private static boolean checkPermission() {
+        return ContextCompat.checkSelfPermission(NRAppContext.getAppContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(NRAppContext.getAppContext(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
     }
 
     private void onLocationChanged(Location location) {
@@ -309,55 +294,6 @@ class NRLocationAdapter {
         }
     }
 
-//    /**
-//     * get speed of the location
-//     */
-//    private String getLocSpeed() {
-//        if (mCurrentLocation != null && mLastLocation != null) {
-//
-//            mSpeed = Math.sqrt(Math.pow(mLastLocation.getLongitude() - mCurrentLocation.getLongitude(), 2)
-//                    + Math.pow(mLastLocation.getLatitude() - mCurrentLocation.getLatitude(), 2))
-//                    / (mLastLocation.getTime() - mCurrentLocation.getTime());
-//            mSpeed = (double) Math.round(mSpeed * 100) / 100;
-//
-//            if (mCurrentLocation.hasSpeed() && mCurrentLocation.getSpeed() > 0) {
-//                mSpeed = mCurrentLocation.getSpeed();
-//            }
-//        }
-//        return String.valueOf(mSpeed).replace(",", ".");
-//    }
-//
-//    /**
-//     * get ip address from device when we save location
-//     */
-//    private String getLocalIpAddress() {
-//        try {
-//            for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements(); ) {
-//                NetworkInterface intf = en.nextElement();
-//                for (Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses(); enumIpAddr.hasMoreElements(); ) {
-//                    InetAddress inetAddress = enumIpAddr.nextElement();
-//                    if (!inetAddress.isLoopbackAddress()) {
-//                        //Log.d(TAG, "***** IP="+ ip);
-//                        return Formatter.formatIpAddress(inetAddress.hashCode());
-//                    }
-//                }
-//            }
-//        } catch (SocketException ex) {
-//            Log.e(TAG, ex.toString());
-//        }
-//        return null;
-//    }
-//
-//    private String roundTwoDecimals(double d) {
-//        DecimalFormat twoDForm = new DecimalFormat("#.##");
-//        return twoDForm.format(d);
-//    }
-//
-//
-//    private void setLocationFailedListener(OnLocationFailedListener listener) {
-//        locationFailedListener = listener;
-//    }
-
     /**
      * @return current Location object
      */
@@ -384,32 +320,10 @@ class NRLocationAdapter {
             // It is a good practice to remove location requests when the activity is in a paused or
             // stopped state. Doing so helps battery performance and is especially
             // recommended in applications that request frequent location updates.
-            mFusedLocationClient.removeLocationUpdates(mLocationCallback).addOnCompleteListener(task -> mRequestingLocationUpdates = false);
+            mFusedLocationClient.removeLocationUpdates(mLocationCallback)
+                    .addOnCompleteListener(task -> mRequestingLocationUpdates = false);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
-    //    private boolean isSameLocation(Location location) {
-//        if (NRPersistedAppStorage.getInstance().getPreviousLat().isEmpty() || NRPersistedAppStorage.getInstance().getPreviousLongitude().isEmpty()) {
-//            return false;
-//        }
-//        double lat2 = Double.parseDouble(NRPersistedAppStorage.getInstance().getPreviousLat());
-//        double lng2 = Double.parseDouble(NRPersistedAppStorage.getInstance().getPreviousLongitude());
-//        // lat1 and lng1 are the values of a previously stored location
-//        Log.d(TAG, "distance: " + distance(location, lat2, lng2));
-//        return (distance(location, lat2, lng2) < 1.0);
-//    }
-
-//    /**
-//     * Returns the approximate distance in METERS between this old and the current location.
-//     */
-//    private double distance(Location location, double lat2, double lng2) {
-//        Location location2 = new Location("Location 2");
-//
-//        location2.setLatitude(lat2);
-//        location2.setLongitude(lng2);
-//
-//        return location.distanceTo(location2);
-//    }
 }
