@@ -49,7 +49,7 @@ class NRDeviceDescriptor {
         returnVal.setLocale(Locale.getDefault().toString());
         returnVal.setSystemSoftware("Android");
         returnVal.setCarrier(getCarrierName());
-        returnVal.setAppVersion(getDeviceVersionCode());
+        returnVal.setAppVersion(getClientVersionCode());
         returnVal.setMacAddress(getMacAddress());
 
         if (NRPersistedAppStorage.getInstance().isGdprApproved()) {
@@ -87,7 +87,7 @@ class NRDeviceDescriptor {
     /**
      * @return application manifest version name or current build version name
      */
-    private String getDeviceVersionCode() {
+    private String getClientVersionCode() {
         try {
             PackageInfo pInfo = mContext.getPackageManager().getPackageInfo(mContext.getPackageName(), 0);
             return String.valueOf(pInfo.versionName);

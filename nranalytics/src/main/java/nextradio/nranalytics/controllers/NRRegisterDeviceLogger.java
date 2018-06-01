@@ -29,9 +29,8 @@ class NRRegisterDeviceLogger {
 
 
     void initSdk(String radioSourceName, String fmSourceName) {
-        String sdkVersion = "ts.reporting-android-" + NextRadioReportingSDK.SDK_VERSION; // ts.reporting-<sdkType>-<sdkVersion>
         disposable.add(TagStationApiClientRequest.getInstance()
-                .initilizeSDK(AppUtils.getDeviceCountryCode(NRAppContext.getAppContext()), sdkVersion)
+                .initilizeSDK(AppUtils.getDeviceCountryCode(NRAppContext.getAppContext()), NextRadioReportingSDK.SDK_VERSION)
                 .subscribeOn(Schedulers.io())
                 .subscribe(gdPrApprovalObject -> {
                     NRPersistedAppStorage.getInstance().setGdprApprovalStatus(gdPrApprovalObject.getGdprApproved());

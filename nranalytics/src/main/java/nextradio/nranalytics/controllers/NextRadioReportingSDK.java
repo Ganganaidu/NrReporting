@@ -12,7 +12,7 @@ public class NextRadioReportingSDK {
 
     public static final String TAG = "NextRadioReportingSDK";
 
-    static String SDK_VERSION = "1.0.2";
+    static String SDK_VERSION = "ts.reporting-android-0.0.5";
 
     private static NRRegisterDeviceLogger nrRegisterDevice;
 
