@@ -93,7 +93,7 @@ class NRRadioImpressionLogger {
 
     private void updateRadioImpressionData(String artist, String title, String eventMetadata, int deliveryType,
                                            long frequencyHz, int frequencySubChannel, String callLetters, Object publicStationId, Object trackingId) {
-        //We don’t report to server for any subsequent calls without an active session
+        //We don't report to server for any subsequent calls without an active session
         String currentSession = NRPersistedAppStorage.getInstance().getCurrentListeningData();
         if (AppUtils.isNullOrEmpty(currentSession)) {
             Log.e(TAG, "updateRadioImpressionData: " + " Please start listening session before recording any impression event");
