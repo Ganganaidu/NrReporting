@@ -1,7 +1,6 @@
 package nextradio.nranalytics.controllers;
 
 import android.annotation.SuppressLint;
-import android.os.Debug;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -15,14 +14,15 @@ import io.reactivex.schedulers.Schedulers;
 import nextradio.nranalytics.objects.reporting.Meta;
 import nextradio.nranalytics.objects.reporting.ReportingDataObject;
 import nextradio.nranalytics.utils.AppUtils;
-import nextradio.nranalytics.utils.DateUtils;
+import nextradio.nranalytics.utils.NrDateUtils;
 import nextradio.nranalytics.utils.GsonConverter;
+
 
 /**
  * Created by gkondati on 12/13/2017.
  */
 
-public class NRReportingTracker {
+class NRReportingTracker {
 
     // private static final String TAG = "NRReportingTracker";
 
@@ -32,7 +32,7 @@ public class NRReportingTracker {
 
     private boolean isDataSendingToServer;
 
-    public static NRReportingTracker getInstance() {
+    static NRReportingTracker getInstance() {
         if (_instance == null) {
             _instance = new NRReportingTracker();
         }
@@ -57,6 +57,7 @@ public class NRReportingTracker {
     private void createWebReportingRequest(ReportingDataObject<Object> reportingDataObject) {
         // Log.d(TAG, "deviceID: " + NRPersistedAppStorage.getInstance().getDeviceId());
         try {
+
             TagStationApiClientRequest.getInstance()
                     .reportData(URLEncoder.encode(NRPersistedAppStorage.getInstance().getDeviceId(), "UTF-8"), reportingDataObject)
                     .subscribeOn(Schedulers.io())
@@ -132,7 +133,7 @@ public class NRReportingTracker {
             JSONObject utcJsonObject = new JSONObject();
             try {
                 utcJsonObject.put("type", "Utc.Offset");
-                utcJsonObject.put("clientRequestTime", DateUtils.getCurrentUtcTime());
+                utcJsonObject.put("clientRequestTime", NrDateUtils.getCurrentUtcTime());
                 jsonArray.put(utcJsonObject);
                 NRPersistedAppStorage.getInstance().setUtcSendFlag(false);
                 return jsonArray.toString();

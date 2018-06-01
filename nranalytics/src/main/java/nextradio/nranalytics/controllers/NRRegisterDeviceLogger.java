@@ -11,6 +11,7 @@ import io.reactivex.schedulers.Schedulers;
 import nextradio.nranalytics.objects.registerdevice.DeviceRegResponse;
 import nextradio.nranalytics.objects.registerdevice.DeviceRegistration;
 import nextradio.nranalytics.objects.registerdevice.DeviceRegistrationData;
+import nextradio.nranalytics.utils.AppUtils;
 
 /**
  * Created by gkondati on 11/3/2017.
@@ -26,13 +27,25 @@ class NRRegisterDeviceLogger {
         deviceDescriptor = new NRDeviceDescriptor(NRAppContext.getAppContext());
     }
 
+
+    void initSdk(String radioSourceName, String fmSourceName) {
+        String sdkVersion = "ts.reporting-android-" + NextRadioReportingSDK.SDK_VERSION; // ts.reporting-<sdkType>-<sdkVersion>
+        disposable.add(TagStationApiClientRequest.getInstance()
+                .initilizeSDK(AppUtils.getDeviceCountryCode(NRAppContext.getAppContext()), sdkVersion)
+                .subscribeOn(Schedulers.io())
+                .subscribe(gdPrApprovalObject -> {
+                    NRPersistedAppStorage.getInstance().setGdprApprovalStatus(gdPrApprovalObject.getGdprApproved());
+                    NRRegisterDeviceLogger.this.registerDevice(radioSourceName, fmSourceName);
+                }, Throwable::printStackTrace));
+    }
+
     /**
      * The method registers the device with the TAG service and generates
      * a device ID in the process
      *
      * @param radioSourceName : send "unknown" if no radio source
      */
-    void registerDevice(String radioSourceName, String fmSourceName) {
+    private void registerDevice(String radioSourceName, String fmSourceName) {
         disposable.add(Observable.fromCallable(() -> deviceDescriptor.getDeviceDescription(radioSourceName, fmSourceName))
                 .subscribeOn(Schedulers.io())
                 .subscribe(this::register, Throwable::printStackTrace));
@@ -93,7 +106,9 @@ class NRRegisterDeviceLogger {
         return deviceId != null && deviceId.length() > 0;
     }
 
-    private void clear() {
-        disposable.clear();
+    void clear() {
+        if (disposable != null) {
+            disposable.clear();
+        }
     }
 }

@@ -25,6 +25,7 @@ class NRPersistedAppStorage {
     private static final String AD_GROUP = pckName + "adGroup";
     private static final String FEED_USER_ID = pckName + "feedUserID";
     private static final String DEVICE_STRING = pckName + "DeviceString";
+    private static final String GDPR_APPROVED = pckName + "gdprApproved";
 
     private SharedPreferences appSharedPrefs;
     private SharedPreferences.Editor prefsEditor;
@@ -206,6 +207,14 @@ class NRPersistedAppStorage {
 
     boolean getUTcOfSetUpdateFlag() {
         return appSharedPrefs.getBoolean(pckName + "updateUTCOfSet", false);
+    }
+
+    boolean isGdprApproved() {
+        return appSharedPrefs.getBoolean(GDPR_APPROVED, true);
+    }
+
+    void setGdprApprovalStatus(boolean gdprApproved) {
+        prefsEditor.putBoolean(GDPR_APPROVED, gdprApproved).apply();
     }
 }
 

@@ -12,15 +12,16 @@ import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import nextradio.nranalytics.utils.DateFormats;
+import nextradio.nranalytics.utils.DateTransform;
 import nextradio.nranalytics.utils.GsonConverter;
+import nextradio.nranalytics.utils.NrDateUtils;
 
 /**
  * Created by gkondati on 11/1/2017.
  */
 
 class NRSessionLogger {
-   // private static final String TAG = "NRSessionLogger";
+    // private static final String TAG = "NRSessionLogger";
 
     private Timer mSessionTimer;
     private static NRSessionLogger instance;
@@ -88,7 +89,7 @@ class NRSessionLogger {
         String uniqueId = sdf.format(new Date());
 
         Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-        String currentUTCString = DateFormats.iso8601FormatUTC(cal.getTime());
+        String currentUTCString = DateTransform.iso8601FormatUTC(cal.getTime());
 
         String savedUniqueId = checkIsSessionAvailable(savedValue);
         //Log.d(TAG, "savedUniqueId:" + savedUniqueId);
@@ -127,7 +128,7 @@ class NRSessionLogger {
             String endTime = jsonObject.getString("endTime");
             if (uniqueId == null || uniqueId.length() == 0) {
                 return null;
-            } else if (DateFormats.compareEndTime(endTime) <= 2) {//check session time
+            } else if (NrDateUtils.compareEndTime(endTime) <= 2) {//check session time
                 // && DateFormats.compareEndTime(endTime) <= 2
                 //If the existing session End-Datetime is less than two minutes old, then update the session’s end datetime value.
                 //update end time here

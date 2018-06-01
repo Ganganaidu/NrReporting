@@ -19,10 +19,10 @@ import java.util.List;
 import java.util.Locale;
 
 import nextradio.nranalytics.objects.registerdevice.DeviceRegistrationData;
+import nextradio.nranalytics.utils.AppUtils;
 
 class NRDeviceDescriptor {
     // private static final String TAG = "NRDeviceDescriptor";
-
 
     private Context mContext;
     private DeviceRegistrationData returnVal;
@@ -45,25 +45,30 @@ class NRDeviceDescriptor {
         returnVal.setFmapi(fmSourceName);
         returnVal.setSystemVersion(Build.FINGERPRINT);
         returnVal.setSdkVersion(NextRadioReportingSDK.SDK_VERSION);
-        returnVal.setCountry(Locale.getDefault().getISO3Country());
+        returnVal.setCountry(AppUtils.getDeviceCountryCode(mContext));
         returnVal.setLocale(Locale.getDefault().toString());
         returnVal.setSystemSoftware("Android");
+        returnVal.setCarrier(getCarrierName());
+        returnVal.setAppVersion(getDeviceVersionCode());
+        returnVal.setMacAddress(getMacAddress());
 
-        String carrierName = "unknown";
+        if (NRPersistedAppStorage.getInstance().isGdprApproved()) {
+            returnVal.setAdId(getGoogleAdId());
+        }
+
+        return returnVal;
+    }
+
+    private String getCarrierName() {
         try {
             TelephonyManager manager = (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE);
             if (manager != null) {
-                carrierName = manager.getNetworkOperatorName();
+                return manager.getNetworkOperatorName();
             }
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        returnVal.setCarrier(carrierName);
-        returnVal.setAppVersion(getDeviceVersionCode());
-        returnVal.setMacAddress(getMacAddress());
-        returnVal.setAdId(getGoogleAdId());
-
-        return returnVal;
+        return "unknown";
     }
 
     private String getGoogleAdId() {
@@ -133,7 +138,7 @@ class NRDeviceDescriptor {
     /**
      * @return mac address by using wifi manager
      */
-    @SuppressLint("MissingPermission")
+    @SuppressLint({"MissingPermission", "HardwareIds"})
     private String getMacAddressByWifiInfo() {
         try {
             WifiManager wifi = (WifiManager) mContext.getApplicationContext().getSystemService(Context.WIFI_SERVICE);

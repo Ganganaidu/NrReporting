@@ -2,12 +2,15 @@ package nextradio.reportingsdk;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.media.AudioManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.widget.Button;
 
 
@@ -27,10 +30,13 @@ public class MainActivity extends AppCompatActivity {
 
     int data = 0;
 
+    private VolumeObserver volumeObserver;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        setVolumeControlStream(AudioManager.STREAM_MUSIC);
 
         NextRadioAnalyticsHelper.activateApp();
 
@@ -41,13 +47,13 @@ public class MainActivity extends AppCompatActivity {
         listening.setOnClickListener(view -> {
             data = data + 1;
             if (data == 1) {
-                NextRadioAnalyticsHelper.startListeningSession(93100000, 2, 2, "WXRT");
+                NextRadioAnalyticsHelper.startListeningSession(93100000, 1, 1, "WXRT");
             } else if (data == 2) {
-                NextRadioAnalyticsHelper.startListeningSession(102900000, 0, 1, "WTMX");
+                NextRadioAnalyticsHelper.startListeningSession(93100000, 1, 1, "WXRT");
             } else if (data == 3) {
-                NextRadioAnalyticsHelper.startListeningSession(103900000, 0, 1, "WTMX");
+                NextRadioAnalyticsHelper.startListeningSession(93100000, 1, 1, "WXRT");
             } else if (data == 4) {
-                NextRadioAnalyticsHelper.startListeningSession(104900000, 0, 1, "WTMX");
+                NextRadioAnalyticsHelper.startListeningSession(93100000, 1, 1, "WXRT");
             }
         });
 
@@ -60,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
         updateData.setOnClickListener(view -> {
                     //NRListeningSessionLogger.getInstance().updateListeningSession();
                     NextRadioAnalyticsHelper.recordRadioImpressionEvent("", "",
-                            "Data", 101900000, 1, 0, "WTMX");
+                            "Data", 101900000, 1, 0, "WTMX", 1, false);
                 }
         );
 
@@ -68,6 +74,13 @@ public class MainActivity extends AppCompatActivity {
         stopListening.setOnClickListener(view -> {
             NextRadioAnalyticsHelper.stopListeningSession();
         });
+
+        setUpVolumeObserver();
+    }
+
+    private void setUpVolumeObserver() {
+        volumeObserver = new VolumeObserver(this, new Handler());
+        getApplicationContext().getContentResolver().registerContentObserver(android.provider.Settings.System.CONTENT_URI, true, volumeObserver);
     }
 
     @Override
@@ -82,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         NextRadioAnalyticsHelper.deActivateApp();
+        getApplicationContext().getContentResolver().unregisterContentObserver(volumeObserver);
     }
 
     /**
@@ -125,5 +139,15 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(TAG, "onRequestPermissionsResult: ");
             }
         }
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_VOLUME_UP:
+            case KeyEvent.KEYCODE_VOLUME_DOWN:
+                return true;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }

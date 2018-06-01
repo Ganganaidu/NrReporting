@@ -27,7 +27,7 @@ class NRActivityHelper {
                     @Override
                     public void onActivityResumed(final Activity activity) {
                         NRPersistedAppStorage.getInstance().setUtcSendFlag(true);
-                        if (checkLocationPermission(application)) {
+                        if (checkLocationPermission(application) && NRPersistedAppStorage.getInstance().isGdprApproved()) {
                             NRLocationAdapter.getInstance().startLocationUpdates();
                         }
                     }

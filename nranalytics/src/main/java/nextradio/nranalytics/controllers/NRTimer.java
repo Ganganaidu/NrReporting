@@ -1,7 +1,5 @@
 package nextradio.nranalytics.controllers;
 
-import android.util.Log;
-
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;

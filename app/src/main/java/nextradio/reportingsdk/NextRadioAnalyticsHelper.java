@@ -16,6 +16,7 @@ public class NextRadioAnalyticsHelper {
     static void initNRReportingSDK(Application application) {
         NextRadioReportingSDK.initializeSdk(application);
         NextRadioReportingSDK.registerApp("nr_android");
+        NextRadioReportingSDK.setAppForProductionMode(false);
     }
 
     /***call this on main activity onCreate() method*/
@@ -42,6 +43,14 @@ public class NextRadioAnalyticsHelper {
      */
     static void recordRadioImpressionEvent(String artist, String title, String eventMetadata, int frequencyHz, int frequencySubChannel, int deliveryType, String callLetters) {
         NextRadioReportingSDK.recordRadioImpressionEvent(artist, title, eventMetadata, frequencyHz, frequencySubChannel, deliveryType, callLetters);
+    }
+
+    /**
+     * Call this when radio event change
+     */
+    static void recordRadioImpressionEvent(String artist, String title, String eventMetadata, int frequencyHz,
+                                           int frequencySubChannel, int deliveryType, String callLetters, Object publicStationId, Object isSimulcast) {
+        NextRadioReportingSDK.recordRadioImpressionEvent(artist, title, eventMetadata, frequencyHz, frequencySubChannel, deliveryType, callLetters, publicStationId, isSimulcast);
     }
 
     /**

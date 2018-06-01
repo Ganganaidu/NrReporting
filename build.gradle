@@ -17,12 +17,11 @@ buildscript {
 
 allprojects {
     repositories {
-        maven { url 'https://maven.google.com' }
         jcenter()
-        maven { url "https://dl.bintray.com/gkondati/nr_reporting_sdk" }
+        maven { url 'https://maven.google.com' }
+        //maven { url "https://dl.bintray.com/gkondati/nr_reporting_sdk" }
         maven { url 'https://code.nextradioapp.com' }
     }
 }
-
 
 

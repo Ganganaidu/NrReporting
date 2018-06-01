@@ -2,6 +2,7 @@ package nextradio.nranalytics.controllers;
 
 import io.reactivex.Completable;
 import io.reactivex.Observable;
+import nextradio.nranalytics.objects.GdPrApprovalObject;
 import nextradio.nranalytics.objects.registerdevice.DeviceRegResponse;
 import nextradio.nranalytics.objects.registerdevice.DeviceRegistration;
 import nextradio.nranalytics.objects.reporting.ReportingDataObject;
@@ -39,5 +40,14 @@ class TagStationApiClientRequest {
     Completable reportData(String tsId, ReportingDataObject<Object> reportingDataObject) {
         RestRequestInterface request = RestAPIRequest.getRetrofit().create(RestRequestInterface.class);
         return request.reportData(tsId, reportingDataObject);
+    }
+
+    /**
+     * @param sdkVersion: required; follows format of ts.reporting-<sdkType>-<sdkVersion>
+     */
+    Observable<GdPrApprovalObject> initilizeSDK(String countryCOde, String sdkVersion) {
+        RestRequestInterface request = RestAPIRequest.getRetrofit().create(RestRequestInterface.class);
+        return request.initializeSdK(countryCOde, sdkVersion)
+                .map(gdprApproved -> gdprApproved);
     }
 }
