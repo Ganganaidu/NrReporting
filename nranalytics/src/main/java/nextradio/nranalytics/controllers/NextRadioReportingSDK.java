@@ -67,6 +67,8 @@ public class NextRadioReportingSDK {
 
     /**
      * Register application with NextRadio and generate unique ID to identify the application
+     *
+     * @param radioSourceName : Pass the key that assigned by TagStation team(Important)
      */
     public static void registerApp(String radioSourceName) {
         if (isInitialized()) {
@@ -78,6 +80,9 @@ public class NextRadioReportingSDK {
 
     /**
      * Register application with NextRadio and generate unique ID to identify the application
+     *
+     * @param radioSourceName : Pass the key that assigned by TagStation team(Important)
+     * @param fmSource        : optional (Mostly used with FM compatible devices)
      */
     public static void registerAppWithFmSource(String radioSourceName, String fmSource) {
         if (isInitialized()) {
@@ -119,6 +124,9 @@ public class NextRadioReportingSDK {
 
     /**
      * Register application with NextRadio and generate unique ID to identify the application
+     *
+     * @param fmSourceName    : optional (Mostly used with FM compatible devices)
+     * @param radioSourceName : Pass the key that assigned by TagStation team(Important)
      */
     private static void registerWithSdk(String radioSourceName, String fmSourceName) {
         nrRegisterDevice.initSdk(radioSourceName, fmSourceName);

@@ -25,11 +25,6 @@ class RestAPIRequest {
         return instance;
     }
 
-    private RestAPIRequest withAPIHost(String hostURL) {
-        BASE_URL = hostURL;
-        return this;
-    }
-
     static Retrofit getRetrofit() {
         BASE_URL = NRPersistedAppStorage.getInstance().getTagURL();
         if (retrofit == null) {

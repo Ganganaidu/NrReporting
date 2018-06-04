@@ -15,8 +15,8 @@ public class NextRadioAnalyticsHelper {
     /***put this in your main application class*/
     static void initNRReportingSDK(Application application) {
         NextRadioReportingSDK.initializeSdk(application);
-        NextRadioReportingSDK.registerApp("nr_android");
         NextRadioReportingSDK.setAppForProductionMode(false);
+        NextRadioReportingSDK.registerApp("nr_android");
     }
 
     /***call this on main activity onCreate() method*/

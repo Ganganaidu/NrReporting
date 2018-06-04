@@ -28,11 +28,18 @@ class NRRegisterDeviceLogger {
     }
 
 
+    /**
+     * init SDK with register call and check for GDPR changes
+     *
+     * @param fmSourceName    : optional (Mostly used with FM compatible devices)
+     * @param radioSourceName : Pass the key that assigned by TagStation team(Important)
+     */
     void initSdk(String radioSourceName, String fmSourceName) {
         disposable.add(TagStationApiClientRequest.getInstance()
                 .initilizeSDK(AppUtils.getDeviceCountryCode(NRAppContext.getAppContext()), NextRadioReportingSDK.SDK_VERSION)
                 .subscribeOn(Schedulers.io())
                 .subscribe(gdPrApprovalObject -> {
+                    Log.d(TAG, "initSdk: ");
                     NRPersistedAppStorage.getInstance().setGdprApprovalStatus(gdPrApprovalObject.getGdprApproved());
                     NRRegisterDeviceLogger.this.registerDevice(radioSourceName, fmSourceName);
                 }, Throwable::printStackTrace));
