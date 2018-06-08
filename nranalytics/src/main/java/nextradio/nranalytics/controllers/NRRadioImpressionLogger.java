@@ -8,9 +8,6 @@ import org.json.JSONObject;
 import io.reactivex.Observable;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
-import nextradio.nranalytics.utils.AppUtils;
-import nextradio.nranalytics.utils.GsonConverter;
-import nextradio.nranalytics.utils.NrDateUtils;
 
 import static nextradio.nranalytics.controllers.NextRadioReportingSDK.TAG;
 
@@ -93,16 +90,16 @@ class NRRadioImpressionLogger {
 
     private void updateRadioImpressionData(String artist, String title, String eventMetadata, int deliveryType,
                                            long frequencyHz, int frequencySubChannel, String callLetters, Object publicStationId, Object trackingId) {
-        //We don't report to server for any subsequent calls without an active session
+        //We don’t report to server for any subsequent calls without an active session
         String currentSession = NRPersistedAppStorage.getInstance().getCurrentListeningData();
-        if (AppUtils.isNullOrEmpty(currentSession)) {
+        if (NrUAppUtils.isNullOrEmpty(currentSession)) {
             Log.e(TAG, "updateRadioImpressionData: " + " Please start listening session before recording any impression event");
             return;
         }
         try {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("type", "Impression.RadioEvent");
-            jsonObject.put("createTime", NrDateUtils.getCurrentUtcTime());
+            jsonObject.put("createTime", NrUDateUtils.getCurrentUtcTime());
             jsonObject.put("artist", artist);
             jsonObject.put("title", title);
             jsonObject.put("eventMetadata", eventMetadata);
@@ -126,7 +123,7 @@ class NRRadioImpressionLogger {
                 e.printStackTrace();
             }
 
-            String data = GsonConverter.getInstance().createJsonObjectToString(NRPersistedAppStorage.getInstance().getRadioEventImpression(), jsonObject);
+            String data = NrUGsonConverter.getInstance().createJsonObjectToString(NRPersistedAppStorage.getInstance().getRadioEventImpression(), jsonObject);
             NRPersistedAppStorage.getInstance().saveRadioEventImpression(data);
 
         } catch (Exception e) {

@@ -11,7 +11,6 @@ import io.reactivex.schedulers.Schedulers;
 import nextradio.nranalytics.objects.registerdevice.DeviceRegResponse;
 import nextradio.nranalytics.objects.registerdevice.DeviceRegistration;
 import nextradio.nranalytics.objects.registerdevice.DeviceRegistrationData;
-import nextradio.nranalytics.utils.AppUtils;
 
 /**
  * Created by gkondati on 11/3/2017.
@@ -36,10 +35,10 @@ class NRRegisterDeviceLogger {
      */
     void initSdk(String radioSourceName, String fmSourceName) {
         disposable.add(TagStationApiClientRequest.getInstance()
-                .initilizeSDK(AppUtils.getDeviceCountryCode(NRAppContext.getAppContext()), NextRadioReportingSDK.SDK_VERSION)
+                .initilizeSDK(NrUAppUtils.getDeviceCountryCode(NRAppContext.getAppContext()), NextRadioReportingSDK.SDK_VERSION)
                 .subscribeOn(Schedulers.io())
                 .subscribe(gdPrApprovalObject -> {
-                    Log.d(TAG, "initSdk: ");
+                    Log.d(TAG, "initSdk: " + gdPrApprovalObject.getGdprApproved() + " code : " + NrUAppUtils.getDeviceCountryCode(NRAppContext.getAppContext()));
                     NRPersistedAppStorage.getInstance().setGdprApprovalStatus(gdPrApprovalObject.getGdprApproved());
                     NRRegisterDeviceLogger.this.registerDevice(radioSourceName, fmSourceName);
                 }, Throwable::printStackTrace));
@@ -47,7 +46,7 @@ class NRRegisterDeviceLogger {
 
     /**
      * The method registers the device with the TAG service and generates
-     * a device ID in the process
+     * a device ÅID in the process
      *
      * @param radioSourceName : send "unknown" if no radio source
      */

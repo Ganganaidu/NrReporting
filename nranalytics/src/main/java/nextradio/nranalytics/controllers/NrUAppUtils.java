@@ -1,4 +1,4 @@
-package nextradio.nranalytics.utils;
+package nextradio.nranalytics.controllers;
 
 import android.content.Context;
 import android.telephony.TelephonyManager;
@@ -10,16 +10,16 @@ import java.util.Locale;
  * Created by gkondati on 12/19/2017.
  */
 
-public class AppUtils {
+public class NrUAppUtils {
 
     /**
      * @return true if data is empty
      */
-    public static boolean isNullOrEmpty(String data) {
+    static boolean isNullOrEmpty(String data) {
         return data == null || data.isEmpty();
     }
 
-    public static String getDeviceCountryCode(Context context) {
+    static String getDeviceCountryCode(Context context) {
 
         String countryCode = getCountryCodeFromSIM(context);
         if (!TextUtils.isEmpty(countryCode)) {

@@ -1,4 +1,4 @@
-package nextradio.nranalytics.utils;
+package nextradio.nranalytics.controllers;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -15,19 +15,19 @@ import java.util.List;
  * Created by gkondati on 10/31/2017.
  */
 
-public class GsonConverter {
-    private static final String TAG = "GsonConverter";
+class NrUGsonConverter {
+    private static final String TAG = "NrUGsonConverter";
 
-    private static GsonConverter instance;
+    private static NrUGsonConverter instance;
 
-    public static GsonConverter getInstance() {
+    static NrUGsonConverter getInstance() {
         if (instance == null) {
-            instance = new GsonConverter();
+            instance = new NrUGsonConverter();
         }
         return instance;
     }
 
-    public <T> String convertObjectToString(String savedValues, T actionPayload) {
+    <T> String convertObjectToString(String savedValues, T actionPayload) {
         List<T> actionList = convertStringToArrayList(savedValues);
         actionList.add(actionPayload);
         return getGson().toJson(actionList, getType());
@@ -41,7 +41,7 @@ public class GsonConverter {
         }
     }
 
-    public <T> List<T> getSavedData(String savedData) {
+    <T> List<T> getSavedData(String savedData) {
         Type listType = new TypeToken<List<T>>() {
         }.getType();
         Gson gson = new Gson();
@@ -49,7 +49,7 @@ public class GsonConverter {
     }
 
 
-    public String createJsonObjectToString(String savedValues, JSONObject newDataJson) {
+    String createJsonObjectToString(String savedValues, JSONObject newDataJson) {
         try {
             JSONArray jsonArray;
             if (savedValues.isEmpty()) {
@@ -65,7 +65,7 @@ public class GsonConverter {
         }
     }
 
-    public String updateJsonObject(String savedValues, JSONObject newDataJson) {
+    String updateJsonObject(String savedValues, JSONObject newDataJson) {
         try {
             JSONArray jsonArray = new JSONArray(savedValues);
             int length = jsonArray.length();
@@ -77,7 +77,7 @@ public class GsonConverter {
         }
     }
 
-    public JSONObject updateSessionEndTime(String savedValues, String endTime) {
+    JSONObject updateSessionEndTime(String savedValues, String endTime) {
         JSONArray jsonArray;
         try {
             jsonArray = new JSONArray(savedValues);
@@ -91,7 +91,7 @@ public class GsonConverter {
         }
     }
 
-    public JSONObject giveMeJsonObject(String savedValues) {
+    JSONObject giveMeJsonObject(String savedValues) {
         JSONArray jsonArray;
         try {
             jsonArray = new JSONArray(savedValues);
@@ -116,13 +116,13 @@ public class GsonConverter {
         }.getType();
     }
 
-    public <T> String serializeToJson(T myClass) {
+    <T> String serializeToJson(T myClass) {
         Gson gson = new Gson();
         return gson.toJson(myClass);
     }
 
     // Deserialize to single object.
-    public <T> T deserializeFromJson(String jsonString, Class<T> classOfT) {
+    <T> T deserializeFromJson(String jsonString, Class<T> classOfT) {
         Gson gson = new Gson();
         return gson.fromJson(jsonString, classOfT);
     }

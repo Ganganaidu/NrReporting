@@ -13,9 +13,6 @@ import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
 import nextradio.nranalytics.objects.reporting.Meta;
 import nextradio.nranalytics.objects.reporting.ReportingDataObject;
-import nextradio.nranalytics.utils.AppUtils;
-import nextradio.nranalytics.utils.NrDateUtils;
-import nextradio.nranalytics.utils.GsonConverter;
 
 
 /**
@@ -90,10 +87,10 @@ class NRReportingTracker {
         reportingDataObject.setMeta(new Meta().setVersion(NextRadioReportingSDK.SDK_VERSION));
 
         //no need to send any records to server if there is no following data.
-        if (AppUtils.isNullOrEmpty(locationData) &&
-                AppUtils.isNullOrEmpty(listeningSessionData) &&
-                AppUtils.isNullOrEmpty(currentListingData) &&
-                AppUtils.isNullOrEmpty(radioImpressionData)) {
+        if (NrUAppUtils.isNullOrEmpty(locationData) &&
+                NrUAppUtils.isNullOrEmpty(listeningSessionData) &&
+                NrUAppUtils.isNullOrEmpty(currentListingData) &&
+                NrUAppUtils.isNullOrEmpty(radioImpressionData)) {
             return null;
         }
         addData(reportingDataObject, utcOffset);
@@ -102,7 +99,7 @@ class NRReportingTracker {
         addData(reportingDataObject, currentListingData);
         addData(reportingDataObject, radioImpressionData);
 
-        //Log.d(TAG, "reportDataToServer: " + GsonConverter.getInstance().serializeToJson(reportingDataObject));
+        //Log.d(TAG, "reportDataToServer: " + NrUGsonConverter.getInstance().serializeToJson(reportingDataObject));
 
         return reportingDataObject;
     }
@@ -116,10 +113,10 @@ class NRReportingTracker {
         }
         List<Object> list = reportingDataObject.getData();
         if (list != null) {
-            list.addAll(GsonConverter.getInstance().getSavedData(savedData));
+            list.addAll(NrUGsonConverter.getInstance().getSavedData(savedData));
             reportingDataObject.setData(list);
         } else {
-            reportingDataObject.setData(GsonConverter.getInstance().getSavedData(savedData));
+            reportingDataObject.setData(NrUGsonConverter.getInstance().getSavedData(savedData));
         }
     }
 
@@ -133,7 +130,7 @@ class NRReportingTracker {
             JSONObject utcJsonObject = new JSONObject();
             try {
                 utcJsonObject.put("type", "Utc.Offset");
-                utcJsonObject.put("clientRequestTime", NrDateUtils.getCurrentUtcTime());
+                utcJsonObject.put("clientRequestTime", NrUDateUtils.getCurrentUtcTime());
                 jsonArray.put(utcJsonObject);
                 NRPersistedAppStorage.getInstance().setUtcSendFlag(false);
                 return jsonArray.toString();
@@ -161,6 +158,6 @@ class NRReportingTracker {
 
 
     private String convertDataToString(ReportingDataObject<Object> reportingDataObject) {
-        return GsonConverter.getInstance().serializeToJson(reportingDataObject);
+        return NrUGsonConverter.getInstance().serializeToJson(reportingDataObject);
     }
 }

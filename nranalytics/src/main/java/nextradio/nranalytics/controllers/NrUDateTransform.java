@@ -1,4 +1,4 @@
-package nextradio.nranalytics.utils;
+package nextradio.nranalytics.controllers;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -12,16 +12,16 @@ import java.util.TimeZone;
  * Helper class to change Date objects into Strings of various formats
  * and obtain Date type objects from various String representations.
  */
-public class DateTransform {
+class NrUDateTransform {
 
-    public static final SimpleDateFormat iso8601FormatterUTC = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
-    public static final SimpleDateFormat msSqlDateFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.ENGLISH);
+    static final SimpleDateFormat iso8601FormatterUTC = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
+    static final SimpleDateFormat msSqlDateFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.ENGLISH);
 
     /**
      * @param date - The Date object to transform
      * @return -  String representation of the Date in iso8601UTC format: "yyyy-MM-dd HH:mm:ss"
      */
-    public static String iso8601FormatUTC(Date date) {
+    static String iso8601FormatUTC(Date date) {
         synchronized (iso8601FormatterUTC) {
             iso8601FormatterUTC.setTimeZone(TimeZone.getTimeZone("UTC"));
             return iso8601FormatterUTC.format(date);
@@ -32,7 +32,7 @@ public class DateTransform {
      * @param date - The Date object to transform
      * @return -String representation of the Date in msSql format: "yyyy-MM-dd'T'HH:mm:ss"
      */
-    public static String msSqlDateFormat(Date date) {
+    static String msSqlDateFormat(Date date) {
         synchronized (msSqlDateFormatter) {
             return msSqlDateFormatter.format(date);
         }

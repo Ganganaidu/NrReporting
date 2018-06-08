@@ -26,19 +26,19 @@ class TagStationApiClientRequest {
     }
 
     Observable<DeviceRegResponse> registerDevice(DeviceRegistration deviceRegistration) {
-        RestRequestInterface request = RestAPIRequest.getRetrofit().create(RestRequestInterface.class);
+        IRestRequestInterface request = RestAPIRequest.getRetrofit().create(IRestRequestInterface.class);
         return request.registerDevice(deviceRegistration)
                 .map(deviceRegResponse -> deviceRegResponse);
     }
 
     Observable<DeviceRegResponse> updateRegisteredDevice(String tsId, DeviceRegistration deviceRegistration) {
-        RestRequestInterface request = RestAPIRequest.getRetrofit().create(RestRequestInterface.class);
+        IRestRequestInterface request = RestAPIRequest.getRetrofit().create(IRestRequestInterface.class);
         return request.updateRegisteredDevice(tsId, deviceRegistration)
                 .map(deviceRegResponse -> deviceRegResponse);
     }
 
     Completable reportData(String tsId, ReportingDataObject<Object> reportingDataObject) {
-        RestRequestInterface request = RestAPIRequest.getRetrofit().create(RestRequestInterface.class);
+        IRestRequestInterface request = RestAPIRequest.getRetrofit().create(IRestRequestInterface.class);
         return request.reportData(tsId, reportingDataObject);
     }
 
@@ -46,7 +46,7 @@ class TagStationApiClientRequest {
      * @param sdkVersion: required; follows format of ts.reporting-<sdkType>-<sdkVersion>
      */
     Observable<GdPrApprovalObject> initilizeSDK(String countryCOde, String sdkVersion) {
-        RestRequestInterface request = RestAPIRequest.getRetrofit().create(RestRequestInterface.class);
+        IRestRequestInterface request = RestAPIRequest.getRetrofit().create(IRestRequestInterface.class);
         return request.initializeSdK(countryCOde, sdkVersion)
                 .map(gdprApproved -> gdprApproved);
     }

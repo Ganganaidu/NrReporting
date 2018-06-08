@@ -12,10 +12,6 @@ import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import nextradio.nranalytics.utils.DateTransform;
-import nextradio.nranalytics.utils.GsonConverter;
-import nextradio.nranalytics.utils.NrDateUtils;
-
 /**
  * Created by gkondati on 11/1/2017.
  */
@@ -89,7 +85,7 @@ class NRSessionLogger {
         String uniqueId = sdf.format(new Date());
 
         Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-        String currentUTCString = DateTransform.iso8601FormatUTC(cal.getTime());
+        String currentUTCString = NrUDateTransform.iso8601FormatUTC(cal.getTime());
 
         String savedUniqueId = checkIsSessionAvailable(savedValue);
         //Log.d(TAG, "savedUniqueId:" + savedUniqueId);
@@ -102,11 +98,11 @@ class NRSessionLogger {
                 jsonObject.put("startTime", currentUTCString);
                 jsonObject.put("type", "Session.AppSession"); //getNewBatchId()
 
-                String data = GsonConverter.getInstance().createJsonObjectToString(savedValue, jsonObject);
+                String data = NrUGsonConverter.getInstance().createJsonObjectToString(savedValue, jsonObject);
                 NRPersistedAppStorage.getInstance().saveAppSessionData(data);
             } else {
-                jsonObject = GsonConverter.getInstance().updateSessionEndTime(savedValue, currentUTCString);
-                String data = GsonConverter.getInstance().updateJsonObject(savedValue, jsonObject);
+                jsonObject = NrUGsonConverter.getInstance().updateSessionEndTime(savedValue, currentUTCString);
+                String data = NrUGsonConverter.getInstance().updateJsonObject(savedValue, jsonObject);
                 NRPersistedAppStorage.getInstance().saveAppSessionData(data);
             }
         } catch (JSONException e) {
@@ -128,7 +124,7 @@ class NRSessionLogger {
             String endTime = jsonObject.getString("endTime");
             if (uniqueId == null || uniqueId.length() == 0) {
                 return null;
-            } else if (NrDateUtils.compareEndTime(endTime) <= 2) {//check session time
+            } else if (NrUDateUtils.compareEndTime(endTime) <= 2) {//check session time
                 // && DateFormats.compareEndTime(endTime) <= 2
                 //If the existing session End-Datetime is less than two minutes old, then update the session’s end datetime value.
                 //update end time here

@@ -1,4 +1,4 @@
-package nextradio.nranalytics.utils;
+package nextradio.nranalytics.controllers;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -7,18 +7,18 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import static nextradio.nranalytics.utils.DateTransform.msSqlDateFormatter;
+import static nextradio.nranalytics.controllers.NrUDateTransform.msSqlDateFormatter;
 
 
 /**
  * Created by gkondati on 4/7/2016.
  */
-public class NrDateUtils {
+class NrUDateUtils {
 
     /**
      * @return difference between two time in seconds
      */
-    public static long getTimeDiff(String currentTime, String oldTime) {
+    static long getTimeDiff(String currentTime, String oldTime) {
         long diff = 0;
         Date date1, date2;
         try {
@@ -32,18 +32,18 @@ public class NrDateUtils {
         return diff;
     }
 
-    public static String getCurrentUtcTime() {
+    static String getCurrentUtcTime() {
         Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-        return DateTransform.msSqlDateFormat(cal.getTime());
+        return NrUDateTransform.msSqlDateFormat(cal.getTime());
     }
 
-    public static int compareEndTime(String endTime) {
+    static int compareEndTime(String endTime) {
         int diffMinutes = 0;
         if (endTime != null && endTime.length() > 0) {
             SimpleDateFormat iso8601FormatterUTC = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
 
             Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-            String currentUTCString = DateTransform.iso8601FormatUTC(cal.getTime());
+            String currentUTCString = NrUDateTransform.iso8601FormatUTC(cal.getTime());
 
             //Log.d("ReportingTrackAdapter", "currentUTCString:" + currentUTCString);
             //Log.d("ReportingTrackAdapter", "endTime:" + endTime);
@@ -63,15 +63,15 @@ public class NrDateUtils {
         return diffMinutes;
     }
 
-    public static int compareEndTimeWithStartTime(String startTime, String endTime) {
+    static int compareEndTimeWithStartTime(String startTime, String endTime) {
 
         int diffMinutes = 0;
         if (endTime != null && endTime.length() > 0) {
             //Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
             //String currentUTCString = DateFormats.iso8601FormatUTC(cal.getTime());
             try {
-                Date dStart = DateTransform.iso8601FormatterUTC.parse(startTime);
-                Date dEnd = DateTransform.iso8601FormatterUTC.parse(endTime);//end UTC time
+                Date dStart = NrUDateTransform.iso8601FormatterUTC.parse(startTime);
+                Date dEnd = NrUDateTransform.iso8601FormatterUTC.parse(endTime);//end UTC time
 
                 //in milliseconds
                 long diff = dEnd.getTime() - dStart.getTime();

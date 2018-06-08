@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Locale;
 
 import nextradio.nranalytics.objects.registerdevice.DeviceRegistrationData;
-import nextradio.nranalytics.utils.AppUtils;
 
 class NRDeviceDescriptor {
     // private static final String TAG = "NRDeviceDescriptor";
@@ -45,7 +44,7 @@ class NRDeviceDescriptor {
         returnVal.setFmapi(fmSourceName);
         returnVal.setSystemVersion(Build.FINGERPRINT);
         returnVal.setSdkVersion(NextRadioReportingSDK.SDK_VERSION);
-        returnVal.setCountry(AppUtils.getDeviceCountryCode(mContext));
+        returnVal.setCountry(NrUAppUtils.getDeviceCountryCode(mContext));
         returnVal.setLocale(Locale.getDefault().toString());
         returnVal.setSystemSoftware("Android");
         returnVal.setCarrier(getCarrierName());

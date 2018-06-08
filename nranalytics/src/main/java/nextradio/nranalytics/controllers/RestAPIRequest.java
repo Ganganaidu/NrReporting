@@ -51,7 +51,7 @@ class RestAPIRequest {
     /**
      * Generic method for doing all API requests in the application
      */
-    <T> void doRequest(Call<T> call, final RequestListener<T> requestListener) {
+    <T> void doRequest(Call<T> call, final IRequestListener<T> requestListener) {
         call.enqueue(new Callback<T>() {
 
             @Override

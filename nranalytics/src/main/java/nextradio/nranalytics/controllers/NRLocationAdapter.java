@@ -24,10 +24,6 @@ import org.json.JSONObject;
 
 import java.util.Date;
 
-import nextradio.nranalytics.utils.DateTransform;
-import nextradio.nranalytics.utils.GsonConverter;
-import nextradio.nranalytics.utils.NrDateUtils;
-
 /**
  * Created by gkondati on 7/28/2015.
  */
@@ -246,7 +242,7 @@ class NRLocationAdapter {
             mRequestingLocationUpdates = false;
             return;
         }
-        String currentUTCString = NrDateUtils.getCurrentUtcTime();
+        String currentUTCString = NrUDateUtils.getCurrentUtcTime();
 
         JSONObject nrLocationObject = new JSONObject();
         String latitude = String.valueOf(location.getLatitude());
@@ -282,7 +278,7 @@ class NRLocationAdapter {
     }
 
     private String getUtcGpsTime(long time) {
-        return DateTransform.msSqlDateFormat(new Date(time));
+        return NrUDateTransform.msSqlDateFormat(new Date(time));
     }
 
     /**
@@ -290,7 +286,7 @@ class NRLocationAdapter {
      */
     private void saveLocationInStorage(JSONObject nrLocationObject) {
         try {
-            String data = GsonConverter.getInstance().createJsonObjectToString(NRPersistedAppStorage.getInstance().getLocationData(), nrLocationObject);
+            String data = NrUGsonConverter.getInstance().createJsonObjectToString(NRPersistedAppStorage.getInstance().getLocationData(), nrLocationObject);
             NRPersistedAppStorage.getInstance().saveLocationData(data);
             // Log.d(TAG, "saveLocationInStorage: " + data);
         } catch (Exception e) {

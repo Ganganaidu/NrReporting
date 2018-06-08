@@ -4,11 +4,7 @@ import android.location.Location;
 
 import org.json.JSONObject;
 
-import nextradio.nranalytics.utils.AppUtils;
-import nextradio.nranalytics.utils.GsonConverter;
-import nextradio.nranalytics.utils.NrDateUtils;
-
-import static nextradio.nranalytics.utils.NrDateUtils.getCurrentUtcTime;
+import static nextradio.nranalytics.controllers.NrUDateUtils.getCurrentUtcTime;
 
 /**
  * Created by gkondati on 12/11/2017.
@@ -116,7 +112,7 @@ class NRListeningSessionLogger {
         try {
             String currentSession = NRPersistedAppStorage.getInstance().getCurrentListeningData();
             //Log.d(TAG, "updateListeningSession: "+currentSession);
-            if (!AppUtils.isNullOrEmpty(currentSession)) {
+            if (!NrUAppUtils.isNullOrEmpty(currentSession)) {
                 JSONObject jsonObject = new JSONObject(currentSession);
                 jsonObject.putOpt(END_TIME, getCurrentUtcTime());
                 NRPersistedAppStorage.getInstance().saveCurrentListeningData(jsonObject.toString());
@@ -133,13 +129,13 @@ class NRListeningSessionLogger {
         String previousSessionValue = NRPersistedAppStorage.getInstance().getCurrentListeningData();
         try {
             //Log.d(TAG, "updateListeningSession: "+previousSessionValue);
-            if (!AppUtils.isNullOrEmpty(previousSessionValue)) {
+            if (!NrUAppUtils.isNullOrEmpty(previousSessionValue)) {
                 JSONObject jsonObject = new JSONObject(previousSessionValue);
                 jsonObject.put(END_TIME, getCurrentUtcTime());
                 jsonObject.put(IS_ENDED, true);
                 NRPersistedAppStorage.getInstance().saveCurrentListeningData("");
 
-                String data = GsonConverter.getInstance().createJsonObjectToString(NRPersistedAppStorage.getInstance().getListeningData(), jsonObject);
+                String data = NrUGsonConverter.getInstance().createJsonObjectToString(NRPersistedAppStorage.getInstance().getListeningData(), jsonObject);
                 NRPersistedAppStorage.getInstance().saveListeningData(data);
             }
         } catch (Exception e) {
@@ -150,7 +146,7 @@ class NRListeningSessionLogger {
     private boolean isEqualToCurrentTune(long frequencyHz, int frequencySubChannel, int deliveryType) {
         String currentListeningData = NRPersistedAppStorage.getInstance().getCurrentListeningData();
         try {
-            if (!AppUtils.isNullOrEmpty(currentListeningData)) {
+            if (!NrUAppUtils.isNullOrEmpty(currentListeningData)) {
                 JSONObject jsonObject = new JSONObject(currentListeningData);
                 //String startTime = jsonObject.getString(START_TIME);
                 String endTime = jsonObject.getString(END_TIME);
@@ -158,7 +154,7 @@ class NRListeningSessionLogger {
                         && frequencySubChannel == jsonObject.getInt("frequencySubChannel")
                         && deliveryType == jsonObject.getInt("deliveryType")) {
                     //if end time and current time difference is grater than the 2 min interval, end this session and start new session
-                    return NrDateUtils.getTimeDiff(getCurrentUtcTime(), endTime) <= 120;
+                    return NrUDateUtils.getTimeDiff(getCurrentUtcTime(), endTime) <= 120;
                 }
             }
         } catch (Exception e) {
