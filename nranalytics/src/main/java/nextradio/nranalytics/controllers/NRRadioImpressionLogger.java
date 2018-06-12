@@ -22,6 +22,7 @@ class NRRadioImpressionLogger {
     private long previousFrequencyHz = 0;
     private String previousArtist = "";
     private String previousTitle = "";
+    private int previousFrequencySubChannel = -1;
 
     private CompositeDisposable disposable = new CompositeDisposable();
 
@@ -49,16 +50,7 @@ class NRRadioImpressionLogger {
      */
     void recordRadioImpressionEvent(String artist, String title, String eventMetadata, int deliveryType,
                                     long frequencyHz, int frequencySubChannel, String callLetters) {
-        disposable.clear();
-        disposable.add(Observable.fromCallable(() -> isIdenticalData(frequencyHz, artist, title, eventMetadata))
-                .subscribeOn(Schedulers.computation())
-                .subscribe(isIdenticalData -> {
-                    //insert only if data is not identical
-                    if (!isIdenticalData) {
-                        updateRadioImpressionData(artist, title, eventMetadata, deliveryType,
-                                frequencyHz, frequencySubChannel, callLetters, null, null);
-                    }
-                }, Throwable::printStackTrace));
+        recordData(artist, title, eventMetadata, deliveryType, frequencyHz, frequencySubChannel, callLetters, null, null);
     }
 
     /**
@@ -76,14 +68,18 @@ class NRRadioImpressionLogger {
      */
     void recordRadioImpressionEvent(String artist, String title, String eventMetadata, int deliveryType,
                                     long frequencyHz, int frequencySubChannel, String callLetters, Object publicStationId, Object trackingId) {
+        recordData(artist, title, eventMetadata, deliveryType, frequencyHz, frequencySubChannel, callLetters, publicStationId, trackingId);
+    }
+
+    private void recordData(String artist, String title, String eventMetadata, int deliveryType,
+                            long frequencyHz, int frequencySubChannel, String callLetters, Object publicStationId, Object trackingId) {
         disposable.clear();
-        disposable.add(Observable.fromCallable(() -> isIdenticalData(frequencyHz, artist, title, eventMetadata))
+        disposable.add(Observable.fromCallable(() -> isIdenticalData(frequencyHz, artist, title, eventMetadata, frequencySubChannel))
                 .subscribeOn(Schedulers.computation())
                 .subscribe(isIdenticalData -> {
                     //insert only if data is not identical
                     if (!isIdenticalData) {
-                        updateRadioImpressionData(artist, title, eventMetadata, deliveryType,
-                                frequencyHz, frequencySubChannel, callLetters, publicStationId, trackingId);
+                        updateRadioImpressionData(artist, title, eventMetadata, deliveryType, frequencyHz, frequencySubChannel, callLetters, publicStationId, trackingId);
                     }
                 }, Throwable::printStackTrace));
     }
@@ -138,15 +134,19 @@ class NRRadioImpressionLogger {
      * @param title       : name of the current playing song
      * @param artist      : name of the current playing song
      */
-    private boolean isIdenticalData(long frequencyHz, String artist, String title, String eventMetadata) {
+    private boolean isIdenticalData(long frequencyHz, String artist, String title, String eventMetadata, int frequencySubChannel) {
         if ((artist == null || artist.isEmpty()) && (title == null || title.isEmpty()) && (eventMetadata == null || eventMetadata.isEmpty())) {
             return true;
         }
-        boolean isIdentical = previousFrequencyHz == frequencyHz && (previousArtist.equals(artist) && previousTitle.equals(title));
+        boolean isIdentical = (previousFrequencyHz == frequencyHz
+                && previousFrequencySubChannel == frequencySubChannel
+                && (previousArtist.equals(artist) && previousTitle.equals(title)));
 
         previousFrequencyHz = frequencyHz;
         previousArtist = artist;
         previousTitle = title;
+        previousFrequencySubChannel = frequencySubChannel;
+
         return isIdentical;
     }
 }
