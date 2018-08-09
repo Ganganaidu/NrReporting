@@ -34,6 +34,7 @@ class NrUDateTransform {
      */
     static String msSqlDateFormat(Date date) {
         synchronized (msSqlDateFormatter) {
+            msSqlDateFormatter.setTimeZone(TimeZone.getTimeZone("UTC"));
             return msSqlDateFormatter.format(date);
         }
     }
