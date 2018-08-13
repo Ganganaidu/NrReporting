@@ -261,9 +261,9 @@ class NRLocationAdapter {
             nrLocationObject.put("latitude", latitude);
             nrLocationObject.put("longitude", longitude);
             nrLocationObject.put("hAccuracy", hAccuracy);
-            nrLocationObject.put("ipAddress", String.valueOf(location.getSpeed()));
+            nrLocationObject.put("speed", String.valueOf(location.getSpeed()));
+            nrLocationObject.put("ipAddress", MacAddressUtil.getIPAddress(true));
             nrLocationObject.put("gpsUtcTime", getUtcGpsTime(location.getTime()));
-
 
             saveLocationInStorage(nrLocationObject);
             //save prev values to avoid same location
